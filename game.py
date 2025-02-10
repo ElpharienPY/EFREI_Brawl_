@@ -34,7 +34,7 @@ while run:
     #afficher arène
     draw_background()
 
-    #mouvement
+    #mouvement pour P1
     fighter_1.move(SCREEN_WIDTH,SCREEN_HEIGHT)
     #fighter_2.move()
 
