@@ -35,9 +35,9 @@ player2_screen = pygame.transform.scale(player2_screen, (WIDTH, HEIGHT))
 
 # Chargement des personnages
 character_images = [
-    pygame.image.load("assets/images/test_joueur1.png"),
+    pygame.image.load("assets/images/assets_1_(Rado).png"),
     pygame.image.load("assets/images/test_joueur2.png"),
-    pygame.image.load("assets/images/assets_3_(Morgadp)(pixel).png"),
+    pygame.image.load("assets/images/assets_3_(Morgadp).png"),
     pygame.image.load("assets/images/test_joueur4.png"),
 ]
 character_names = ["M.Rado", "M.Chahine", "Gabi", "M.Kais"]
@@ -56,10 +56,10 @@ character_images = [pygame.transform.scale(img, (character_width, character_heig
 
 # Coordonnées des personnages
 character_positions = [
-    (WIDTH // 2 - 353, HEIGHT // 2 - 180),
-    (WIDTH // 2 - 143, HEIGHT // 2 - 180),
-    (WIDTH // 2 + 63, HEIGHT // 2 - 180),
-    (WIDTH // 2 + 268, HEIGHT // 2 - 180)
+    (WIDTH // 2 - 378, HEIGHT // 2 - 265),
+    (WIDTH // 2 - 172, HEIGHT // 2 - 265),
+    (WIDTH // 2 + 28, HEIGHT // 2 - 265),
+    (WIDTH // 2 + 228, HEIGHT // 2 - 265)
 ]
 
 # Sélections des joueurs
