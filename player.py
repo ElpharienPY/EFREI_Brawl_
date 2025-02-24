@@ -1,7 +1,7 @@
 import pygame
 class Player():
 
-    def __init__(self,player, x, y, flip, data, sprite_sheet, animation_steps):
+    def __init__(self,player, x, y, flip, data, sprite_sheet, animation_steps,sound):
         self.player = player
         self.size = data[0]
         self.image_scale = data[1]
@@ -19,8 +19,9 @@ class Player():
         self.attack_type=0
         self.attacking=False
         self.attacking_cooldown=0
+        self.attack_sound=sound
         self.hit=False
-        self.health=10
+        self.health=100
         self.alive=True
 
     def load_images(self, sprite_sheet, animation_steps):
@@ -35,7 +36,7 @@ class Player():
             animation_list.append(temp_img_list)
         return animation_list
 
-    def move(self, screen_width, screen_height, surface, target):
+    def move(self, screen_width, screen_height, surface, target,round_over):
         SPEED = 10
         GRAVITY = 2
         dx = 0
@@ -47,7 +48,7 @@ class Player():
         key = pygame.key.get_pressed()
 
         #rien faire s'il n'attaque pas
-        if self.attacking == False:
+        if self.attacking == False and self.alive == True and round_over == False:
         #Contrôle joueur 1
             if self.player == 1:
             #Contrôle
@@ -72,7 +73,7 @@ class Player():
 
                 # Contrôle joueur 1
                 if self.player == 1:
-                    # Contrôle
+                    #Contrôle
                     if key[pygame.K_q]:
                         dx = -SPEED
                         self.running = True
@@ -180,15 +181,17 @@ class Player():
                 #attaque exécutée ?
                 if self.action == 3 or self.action == 4:
                     self.attacking = False
-                    self.attacking_cooldown = 20
+                    self.attacking_cooldown = 10
                 if self.action == 5:
                     self.hit = False
                     self.attacking = False
-                    self.attacking_cooldown = 20
+                    self.attacking_cooldown = 10
 
     def attack(self, surface, target):
         if self.attacking_cooldown == 0:
+            #execute attaque
             self.attacking = True
+            self.attack_sound.play()
             attacking_rect= pygame.Rect(self.rect.centerx - (2*self.rect.width*self.flip), self.rect.y, 2*self.rect.width, self.rect.height)
             if attacking_rect.colliderect(target.rect):
                 target.health -= 10
