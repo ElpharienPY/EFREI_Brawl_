@@ -1,4 +1,6 @@
 import pygame
+import random
+import os
 from pygame import mixer
 from player import Player
 
@@ -21,28 +23,61 @@ clock = pygame.time.Clock()
 FPS = 60
 
 #musique et effets sonores
-pygame.mixer.music.load("assets/sounds/fight_music1.mp3")
-pygame.mixer.music.set_volume(0.4)
-pygame.mixer.music.play(-1,0.0,5000)
+music_folder = "assets/sounds/musics"  # Remplace par le nom de ton dossier de musiques
+music_files = [f for f in os.listdir(music_folder) if f.endswith('.mp3')]
+
+if not music_files:
+    print("Aucune musique trouvée dans le dossier !")
+else:
+    # Choisir une musique aléatoire
+    chosen_music = random.choice(music_files)
+    music_path = os.path.join(music_folder, chosen_music)
+
+    # Charger et jouer la musique
+    pygame.mixer.music.load(music_path)
+    pygame.mixer.music.play(-1,0.0,5000)
+
+    print(f"Lecture de : {chosen_music}")
+
+
 sword_fx = pygame.mixer.Sound("assets/sounds/sword.wav")
 sword_fx.set_volume(0.5)
 magic_fx = pygame.mixer.Sound("assets/sounds/magic.wav")
 magic_fx.set_volume(0.75)
+punch_fx = pygame.mixer.Sound("assets/sounds/Punch_Sound_Effect.wav")
 
 #données
-background = pygame.image.load("assets/images/Arène EFREI Brawl.png")
-warrior_sheet = pygame.image.load("assets/images/warrior/warrior.png").convert_alpha()
-wizard_sheet = pygame.image.load("assets/images/wizard/wizard.png").convert_alpha()
+background = pygame.image.load("assets/images/Arene_HD.jpeg").convert_alpha()
 versus = pygame.image.load("assets/images/versus1.png").convert_alpha()
 victory = pygame.image.load("assets/images/victory2.png").convert_alpha()
+
+#Warrior (Morgado)
+warrior_sheet = pygame.image.load("assets/images/warrior/warrior.png").convert_alpha()
 WARRIOR_SIZE = 162
 WARRIOR_SCALE = 6
 WARRIOR_OFFSET = [72,68]
 WARRIOR_DATA = [WARRIOR_SIZE,WARRIOR_SCALE,WARRIOR_OFFSET]
+
+#Wizard (Kais)
+wizard_sheet = pygame.image.load("assets/images/wizard/wizard.png").convert_alpha()
 WIZARD_SIZE = 250
 WIZARD_SCALE = 5
 WIZARD_OFFSET = [112,127]
 WIZARD_DATA = [WIZARD_SIZE,WIZARD_SCALE,WIZARD_OFFSET]
+
+#Knight (Chahine)
+king_sheet = pygame.image.load("assets/images/king/king.png").convert_alpha()
+KING_SIZE = 155
+KING_SCALE = 4
+KING_OFFSET = [70,63]
+KING_DATA = [KING_SIZE,KING_SCALE,KING_OFFSET]
+
+#Fighter (Rado)
+fighter_sheet = pygame.image.load("assets/images/fighter/fighter.png").convert_alpha()
+FIGHTER_SIZE = 200
+FIGHT_SCALE = 6
+FIGHT_OFFSET = [95,88]
+FIGHTER_DATA = [FIGHTER_SIZE,FIGHT_SCALE,FIGHT_OFFSET]
 
 #Compteur
 count_font = pygame.font.Font("assets/fonts/super_smash_4_1_by_pokemon_diamond-d7zxu6d.ttf", 400)
@@ -55,7 +90,9 @@ ROUND_OVER_COOLDOWN = 2000
 
 #definir animation
 WARRIOR_ANIMATION_STEPS= [10,8,1,7,7,3,7]
-WIZARD_ANIMATION_STEPS= [8,8,1,8,8,3,7]
+WIZARD_ANIMATION_STEPS= [8,8,2,8,8,3,7]
+KING_ANIMATION_STEPS= [6,8,2,6,6,4,11]
+FIGHTER_ANIMATION_STEPS= [8,8,2,6,6,4,6]
 
 #
 def draw_text (text,font,text_col,x,y):
@@ -79,11 +116,11 @@ def draw_health_bar(health,x,y):
 
 
 #deux joueurs
-fighter_1= Player(1,200, 480, False, WARRIOR_DATA,warrior_sheet, WARRIOR_ANIMATION_STEPS,sword_fx)
-fighter_2 = Player(2 ,1000, 480,True, WIZARD_DATA,wizard_sheet,WIZARD_ANIMATION_STEPS,magic_fx)
-#fighter_3
-#fighter_4
-
+#fighter_1= Player(1,200, 480, False, WARRIOR_DATA,warrior_sheet, WARRIOR_ANIMATION_STEPS,sword_fx) #warrior
+#fighter_1= Player(1,200,480,False,WIZARD_DATA,wizard_sheet,WIZARD_ANIMATION_STEPS,magic_fx)
+#fighter_1= Player(1,200, 480, False, KING_DATA,king_sheet, KING_ANIMATION_STEPS,sword_fx) #king
+fighter_1= Player(1,200,480,False,FIGHTER_DATA,fighter_sheet,FIGHTER_ANIMATION_STEPS,punch_fx) #fighter
+fighter_2 = Player(2 ,1000, 480,True, WIZARD_DATA,wizard_sheet,WIZARD_ANIMATION_STEPS,magic_fx) #wizard
 #Boucle
 run=True
 while run:
@@ -136,9 +173,11 @@ while run:
         if pygame.time.get_ticks() - round_over_time > ROUND_OVER_COOLDOWN:
             round_over = False
             intro_count = 3
-            fighter_1 = Player(1, 200, 480, False, WARRIOR_DATA, warrior_sheet, WARRIOR_ANIMATION_STEPS,sword_fx)
-            fighter_2 = Player(2, 1000, 480, True, WIZARD_DATA, wizard_sheet, WIZARD_ANIMATION_STEPS,magic_fx)
-
+            #fighter_1= Player(1,200, 480, False, WARRIOR_DATA,warrior_sheet, WARRIOR_ANIMATION_STEPS,sword_fx) #warrior
+            #fighter_1= Player(1,200,480,False,WIZARD_DATA,wizard_sheet,WIZARD_ANIMATION_STEPS,magic_fx)
+            #fighter_1= Player(1,200, 480, False, KING_DATA,king_sheet, KING_ANIMATION_STEPS,sword_fx) #king
+            fighter_1= Player(1,200,480,False,FIGHTER_DATA,fighter_sheet,FIGHTER_ANIMATION_STEPS,punch_fx) #fighter
+            fighter_2 = Player(2, 1000, 480, True, WIZARD_DATA, wizard_sheet, WIZARD_ANIMATION_STEPS,magic_fx)  # wizard
 
 
 
@@ -147,7 +186,6 @@ while run:
             run=False
 
     pygame.display.update()
-
 
 #exit pygame
 pygame.quit()

@@ -49,71 +49,50 @@ class Player():
 
         #rien faire s'il n'attaque pas
         if self.attacking == False and self.alive == True and round_over == False:
-        #Contrôle joueur 1
+
+            # Contrôle joueur 1
             if self.player == 1:
-            #Contrôle
+                #Contrôle
                 if key[pygame.K_q]:
                     dx = -SPEED
-                    self.running=True
+                    self.running = True
                 if key[pygame.K_d]:
                     dx = SPEED
-                    self.running=True
-                #saut
+                    self.running = True
+                # saut
                 if key[pygame.K_z] and self.jump == False:
                     self.vel_y = -30
                     self.jump = True
-                #attaque
+                # attaque
                 if key[pygame.K_e] or key[pygame.K_r]:
                     self.attack(surface, target)
-                #quel type d'attaque
+                    # quel type d'attaque
                     if key[pygame.K_e]:
                         self.attack_type = 1
                     if key[pygame.K_r]:
-                        self.attack_type=2
-
-                # Contrôle joueur 1
-                if self.player == 1:
-                    #Contrôle
-                    if key[pygame.K_q]:
-                        dx = -SPEED
-                        self.running = True
-                    if key[pygame.K_d]:
-                        dx = SPEED
-                        self.running = True
-                    # saut
-                    if key[pygame.K_z] and self.jump == False:
-                        self.vel_y = -30
-                        self.jump = True
-                    # attaque
-                    if key[pygame.K_e] or key[pygame.K_r]:
-                        self.attack(surface, target)
-                        # quel type d'attaque
-                        if key[pygame.K_e]:
-                            self.attack_type = 1
-                        if key[pygame.K_r]:
-                            self.attack_type = 2
-            else:
-                # Contrôle joueur 2
-                if self.player == 2:
-                    # Contrôle
-                    if key[pygame.K_LEFT]:
-                        dx = -SPEED
-                        self.running = True
-                    if key[pygame.K_RIGHT]:
-                        dx = SPEED
-                        self.running = True
-                    # saut
-                    if key[pygame.K_UP] and self.jump == False:
-                        self.vel_y = -30
-                        self.jump = True
-                    # attaque
-                    if key[pygame.K_KP1] or key[pygame.K_KP2]:
-                        self.attack(surface, target)
-                        # quel type d'attaque
-                        if key[pygame.K_KP1]:
-                            self.attack_type = 1
-                        if key[pygame.K_KP2]:
-                            self.attack_type = 2
+                        self.attack_type = 2
+        else:
+            # Contrôle joueur 2
+            if self.player == 2:
+                # Contrôle
+                if key[pygame.K_LEFT]:
+                    dx = -SPEED
+                    self.running = True
+                if key[pygame.K_RIGHT]:
+                    dx = SPEED
+                    self.running = True
+                # saut
+                if key[pygame.K_UP] and self.jump == False:
+                    self.vel_y = -30
+                    self.jump = True
+                # attaque
+                if key[pygame.K_KP1] or key[pygame.K_KP2]:
+                    self.attack(surface, target)
+                    # quel type d'attaque
+                    if key[pygame.K_KP1]:
+                        self.attack_type = 1
+                    if key[pygame.K_KP2]:
+                        self.attack_type = 2
 
 
         #Gravité
@@ -165,7 +144,7 @@ class Player():
         else :
             self.update_action(0)#afk
 
-        animation_cooldown = 50
+        animation_cooldown = 60
         self.image = self.animation_list[self.action][self.frame_index]
         #temps entre chaque frame
         if pygame.time.get_ticks() - self.update_time > animation_cooldown:
@@ -181,11 +160,11 @@ class Player():
                 #attaque exécutée ?
                 if self.action == 3 or self.action == 4:
                     self.attacking = False
-                    self.attacking_cooldown = 10
+                    self.attacking_cooldown = 20
                 if self.action == 5:
                     self.hit = False
                     self.attacking = False
-                    self.attacking_cooldown = 10
+                    self.attacking_cooldown = 20
 
     def attack(self, surface, target):
         if self.attacking_cooldown == 0:

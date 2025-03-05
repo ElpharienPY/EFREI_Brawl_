@@ -2,6 +2,7 @@ import pygame
 import cv2
 import os
 import numpy as np
+from arene import start_game
 
 # Initialisation de Pygame
 pygame.init()
@@ -70,19 +71,17 @@ player2 = None
 def play_video(video_path):
     """Jouer une vidéo OpenCV directement dans la fenêtre Pygame."""
 
-    # Vérification si le fichier existe
     if not os.path.exists(video_path):
         print(f"⚠️ Erreur : Le fichier vidéo {video_path} est introuvable.")
         return
 
     cap = cv2.VideoCapture(video_path)
 
-    # Vérifier si la vidéo est bien ouverte
     if not cap.isOpened():
         print(f"⚠️ Erreur : Impossible d'ouvrir la vidéo {video_path}.")
         return
 
-    clock = pygame.time.Clock()  # Pour contrôler le framerate
+    clock = pygame.time.Clock()
 
     while cap.isOpened():
         ret, frame = cap.read()
@@ -94,6 +93,9 @@ def play_video(video_path):
         # Convertir BGR (OpenCV) en RGB (Pygame)
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
+        # Correction d'orientation — ajuste selon ton besoin
+        frame = cv2.flip(frame, 1)  # Inversion verticale (flip 1 pour horizontal, ou rotate pour 180°)
+
         # Redimensionner l'image à la taille de la fenêtre
         frame = cv2.resize(frame, (WIDTH, HEIGHT))
 
@@ -104,8 +106,8 @@ def play_video(video_path):
         screen.blit(frame_surface, (0, 0))
         pygame.display.flip()
 
-        # Contrôle du framerate (~60 fps)
-        clock.tick(60)
+        # Contrôle du framerate (~25 fps)
+        clock.tick(25)
 
         # Gérer les événements Pygame (pour quitter proprement)
         for event in pygame.event.get():
@@ -116,6 +118,8 @@ def play_video(video_path):
 
     cap.release()
     cv2.destroyAllWindows()
+
+
 
 
 def select_player():
@@ -210,6 +214,7 @@ def main_menu():
 
     pygame.quit()
 
-
 # Lancer le menu principal
 main_menu()
+
+
