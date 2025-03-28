@@ -49,46 +49,45 @@ class Player():
 
         #rien faire s'il n'attaque pas
         if self.attacking == False and self.alive == True and round_over == False:
-
-            # Contrôle joueur 1
+            # check player 1 controls
             if self.player == 1:
-                #Contrôle
+                # movement
                 if key[pygame.K_q]:
                     dx = -SPEED
                     self.running = True
                 if key[pygame.K_d]:
                     dx = SPEED
                     self.running = True
-                # saut
+                # jump
                 if key[pygame.K_z] and self.jump == False:
                     self.vel_y = -30
                     self.jump = True
-                # attaque
+                # attack
                 if key[pygame.K_e] or key[pygame.K_r]:
-                    self.attack(surface, target)
-                    # quel type d'attaque
+                    self.attack(surface,target)
+                    # determine which attack type was used
                     if key[pygame.K_e]:
                         self.attack_type = 1
                     if key[pygame.K_r]:
                         self.attack_type = 2
-        else:
-            # Contrôle joueur 2
+
+                # check player 2 controls
             if self.player == 2:
-                # Contrôle
+                # movement
                 if key[pygame.K_LEFT]:
                     dx = -SPEED
                     self.running = True
                 if key[pygame.K_RIGHT]:
                     dx = SPEED
                     self.running = True
-                # saut
+                # jump
                 if key[pygame.K_UP] and self.jump == False:
                     self.vel_y = -30
                     self.jump = True
-                # attaque
+                # attack
                 if key[pygame.K_KP1] or key[pygame.K_KP2]:
-                    self.attack(surface, target)
-                    # quel type d'attaque
+                    self.attack(surface,target)
+                    # determine which attack type was used
                     if key[pygame.K_KP1]:
                         self.attack_type = 1
                     if key[pygame.K_KP2]:
@@ -171,11 +170,11 @@ class Player():
             #execute attaque
             self.attacking = True
             self.attack_sound.play()
-            attacking_rect= pygame.Rect(self.rect.centerx - (2*self.rect.width*self.flip), self.rect.y, 2*self.rect.width, self.rect.height)
+            attacking_rect= pygame.Rect(self.rect.centerx - (3*self.rect.width*self.flip), self.rect.y, 3*self.rect.width, self.rect.height)
             if attacking_rect.colliderect(target.rect):
                 target.health -= 10
                 target.hit = True
-            #pygame.draw.rect(surface,(0,255,0), attacking_rect)
+            pygame.draw.rect(surface,(0,255,0), attacking_rect)
 
     def update_action(self, new_action):
         #nouvelle action différente de la précédente

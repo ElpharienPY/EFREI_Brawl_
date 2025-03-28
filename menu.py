@@ -2,7 +2,7 @@ import pygame
 import cv2
 import os
 import numpy as np
-from arene import start_game
+
 
 # Initialisation de Pygame
 pygame.init()
@@ -37,7 +37,7 @@ player2_screen = pygame.transform.scale(player2_screen, (WIDTH, HEIGHT))
 # Chargement des personnages
 character_images = [
     pygame.image.load("assets/images/assets_1_(Rado).png"),
-    pygame.image.load("assets/images/test_joueur2.png"),
+    pygame.image.load("assets/images/assets_2_(Chahine).png"),
     pygame.image.load("assets/images/assets_3_(Morgadp).png"),
     pygame.image.load("assets/images/test_joueur4.png"),
 ]
@@ -48,7 +48,7 @@ character_videos = {
     "M.Rado": "assets/vidéos/Rado_intro.mp4",
     "M.Chahine": "assets/vidéos/Chahine_intro.mp4",
     "Gabi": "assets/vidéos/Gabi_intro.mp4",
-    "M.Kais": "assets/vidéos/Kais.mp4"
+    "M.Kais": "assets/vidéos/Kais_intro.mp4"
 }
 
 # Redimensionner les images des personnages
@@ -177,15 +177,19 @@ def select_character(player_num):
                     global player1, player2
                     if player_num == 1:
                         player1 = character_names[selected_index]
+                        if player1 in character_videos and character_videos[player1]:
+                            play_video(character_videos[player1])
                         print(f"Joueur 1 a choisi : {player1}")
                         select_character(2)  # Sélection du Joueur 2
                     else:
                         player2 = character_names[selected_index]
+                        if player2 in character_videos and character_videos[player2]:
+                            play_video(character_videos[player2])
                         print(f"Joueur 2 a choisi : {player2}")
                         running = False
-
+                        exit()
         pygame.display.flip()
-
+'''
     # Lancement des vidéos après sélection des deux joueurs
     if player1 in character_videos and character_videos[player1]:
         play_video(character_videos[player1])
@@ -194,6 +198,7 @@ def select_character(player_num):
         play_video(character_videos[player2])
 
     exit()
+'''
 
 
 def main_menu():
