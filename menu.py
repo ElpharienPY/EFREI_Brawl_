@@ -18,7 +18,7 @@ WIDTH, HEIGHT = 1280, 720
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Menu du Jeu")
 
-# Chargement des images de l'interface
+# Images de l'interface
 background_menu = pygame.image.load("assets/images/menu_background.png")
 background_menu = pygame.transform.scale(background_menu, (WIDTH, HEIGHT))
 button_image = pygame.image.load("assets/images/button_1v1.png")
@@ -27,7 +27,7 @@ button_rect = button_image.get_rect(center=(WIDTH // 2, HEIGHT // 2))
 background_select = pygame.image.load("assets/images/characters_select.png")
 background_select = pygame.transform.scale(background_select, (WIDTH, HEIGHT))
 
-# Ajout des fonds dédiés pour la sélection des joueurs
+# Fonds dédiés pour la sélection des joueurs
 player1_screen = pygame.image.load("assets/images/player1_select.png")
 player1_screen = pygame.transform.scale(player1_screen, (WIDTH, HEIGHT))
 
@@ -93,7 +93,7 @@ def play_video(video_path):
         # Convertir BGR (OpenCV) en RGB (Pygame)
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
-        # Correction d'orientation — ajuste selon ton besoin
+        # Correction d'orientation
         frame = cv2.flip(frame, 1)  # Inversion verticale (flip 1 pour horizontal, ou rotate pour 180°)
 
         # Redimensionner l'image à la taille de la fenêtre
@@ -106,8 +106,8 @@ def play_video(video_path):
         screen.blit(frame_surface, (0, 0))
         pygame.display.flip()
 
-        # Contrôle du framerate (~25 fps)
-        clock.tick(25)
+        # Contrôle du framerate (60 fps)
+        clock.tick(60)
 
         # Gérer les événements Pygame (pour quitter proprement)
         for event in pygame.event.get():
@@ -189,7 +189,7 @@ def select_character(player_num):
                         running = False
                         exit()
         pygame.display.flip()
-'''
+
     # Lancement des vidéos après sélection des deux joueurs
     if player1 in character_videos and character_videos[player1]:
         play_video(character_videos[player1])
@@ -198,7 +198,7 @@ def select_character(player_num):
         play_video(character_videos[player2])
 
     exit()
-'''
+
 
 
 def main_menu():
