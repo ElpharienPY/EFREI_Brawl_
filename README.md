@@ -21,7 +21,7 @@ Voici les étapes pour installer et exécuter le jeu sur votre machine :
 ### 1. 🚀 Cloner le projet
 Clonez le projet depuis GitHub en utilisant la commande suivante :
 ```bash
-git clone https://github.com/ton-utilisateur/nom-du-projet.git
+git clone https://github.com/ElpharienPY/EFREI_Brawl_.git
 ```
 
 ### 2. 📦 Installer les dépendances
