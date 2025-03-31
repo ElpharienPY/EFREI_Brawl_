@@ -36,6 +36,9 @@ sword_fx.set_volume(0.5)
 magic_fx = pygame.mixer.Sound("assets/sounds/magic.wav")
 magic_fx.set_volume(0.75)
 punch_fx = pygame.mixer.Sound("assets/sounds/Punch_Sound_Effect.wav")
+punch_fx.set_volume(0.75)
+electricity_fx = pygame.mixer.Sound("assets/sounds/electricity_sound.mp3")
+electricity_fx.set_volume(0.75)
 
 # Données des personnages
 background = pygame.image.load("assets/images/Arene_HD.jpeg").convert_alpha()
@@ -107,16 +110,15 @@ def reset_round():
     rounds_joues += 1
     intro_count = 3
     round_over = False
-    fighter_1 = Player(1, 200, 480, False, WARRIOR_DATA, warrior_sheet, WARRIOR_ANIMATION_STEPS, sword_fx)  # warrior
+    fighter_1 = Player(1, 200, 480, False, WARRIOR_DATA, warrior_sheet, WARRIOR_ANIMATION_STEPS, electricity_fx)  # warrior
     # fighter_1= Player(1,200,480,False,WIZARD_DATA,wizard_sheet,WIZARD_ANIMATION_STEPS,magic_fx)
     # fighter_1= Player(1,200, 500, False, KING_DATA,king_sheet, KING_ANIMATION_STEPS,sword_fx) #king
     # fighter_1= Player(1,200,480,False,FIGHTER_DATA,fighter_sheet,FIGHTER_ANIMATION_STEPS,punch_fx) #fighter
 
-    fighter_2 = Player(2, 1000, 500, True, WARRIOR_DATA, warrior_sheet, WARRIOR_ANIMATION_STEPS, sword_fx)  # warrior
+    fighter_2 = Player(2, 1000, 500, True, WARRIOR_DATA, warrior_sheet, WARRIOR_ANIMATION_STEPS, electricity_fx)  # warrior
     # fighter_2 = Player(2 ,1000, 500,True, WIZARD_DATA,wizard_sheet,WIZARD_ANIMATION_STEPS,magic_fx) #wizard
     # fighter_2 = Player(2 ,1000, 500,True, KING_DATA,king_sheet, KING_ANIMATION_STEPS,sword_fx) #king
     # fighter_2 = Player(2 ,1000, 500,True, FIGHTER_DATA,fighter_sheet,FIGHTER_ANIMATION_STEPS,punch_fx) #fighter
-
 
 
 def check_game_over():
