@@ -1,4 +1,4 @@
-# **README - 💥 EFREI BRAWL 💥**
+# **💥 EFREI BRAWL 💥**
 
 ## **Présentation du projet**
 Ce projet est un jeu de combat 2D développé avec **Pygame**. 🎮 Deux joueurs s'affrontent dans une arène avec des personnages ayant des attaques et des mouvements spécifiques. Chaque joueur choisit un personnage et lutte pour atteindre la victoire en remportant un maximum de rounds. 🏆
