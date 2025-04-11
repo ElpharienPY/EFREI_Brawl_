@@ -5,6 +5,8 @@ import numpy as np
 import random
 from pygame import mixer
 from player import Player
+from projectile import Projectile
+
 
 mixer.init()
 pygame.init()
@@ -47,28 +49,28 @@ background = pygame.image.load("assets/images/Arene_HD.jpeg").convert_alpha()
 versus = pygame.image.load("assets/images/versus1.png").convert_alpha()
 victory = pygame.image.load("assets/images/victory2.png").convert_alpha()
 
-#Warrior (Morgado)
+# Warrior (Morgado)
 warrior_sheet = pygame.image.load("assets/images/warrior/warrior.png").convert_alpha()
 WARRIOR_SIZE = 162
 WARRIOR_SCALE = 5
 WARRIOR_OFFSET = [72,68]
 WARRIOR_DATA = [WARRIOR_SIZE,WARRIOR_SCALE,WARRIOR_OFFSET]
 
-#Wizard (Kais)
+# Wizard (Kais)
 wizard_sheet = pygame.image.load("assets/images/wizard/wizard.png").convert_alpha()
 WIZARD_SIZE = 250
 WIZARD_SCALE = 4
 WIZARD_OFFSET = [112,127]
 WIZARD_DATA = [WIZARD_SIZE,WIZARD_SCALE,WIZARD_OFFSET]
 
-#Knight (Chahine)
+# Knight (Chahine)
 king_sheet = pygame.image.load("assets/images/king/king.png").convert_alpha()
 KING_SIZE = 155
 KING_SCALE = 3
 KING_OFFSET = [70,63]
 KING_DATA = [KING_SIZE,KING_SCALE,KING_OFFSET]
 
-#Fighter (Rado)
+# Fighter (Rado)
 fighter_sheet = pygame.image.load("assets/images/fighter/fighter.png").convert_alpha()
 FIGHTER_SIZE = 200
 FIGHT_SCALE = 5
@@ -84,13 +86,7 @@ FIGHTER_ANIMATION_STEPS= [8,8,2,6,6,4,6]
 # Compteur
 count_font = pygame.font.Font("assets/fonts/super_smash_4_1_by_pokemon_diamond-d7zxu6d.ttf", 400)
 score_font = pygame.font.Font("assets/fonts/super_smash_4_1_by_pokemon_diamond-d7zxu6d.ttf", 50)
-intro_count = 3
-last_count_update = pygame.time.get_ticks()
-score = [0, 0]
 round_over = False
-ROUND_OVER_COOLDOWN = 2000
-rounds_joues = 0
-MAX_ROUNDS = 5
 
 # Musique Lobby
 pygame.mixer.init()
@@ -159,10 +155,52 @@ character_data = {
     "M.Kais": {"data": WIZARD_DATA, "sheet": wizard_sheet, "animation_steps": WIZARD_ANIMATION_STEPS, "effect": magic_fx},
 }
 
+# Chargement des spritesheets de projectiles
+def load_frames_from_sheet(sheet, frame_width, frame_height, count, scale=1):
+    frames = []
+    for i in range(count):
+        frame = sheet.subsurface(pygame.Rect(i * frame_width, 0, frame_width, frame_height))
+        if scale != 1:
+            frame = pygame.transform.scale(frame, (frame_width * scale, frame_height * scale))
+        frames.append(frame)
+    return frames
+
+# Données attaques ultimes
+fireball_sheet = pygame.image.load("assets/images/blue_fireball/blue_fireball.png").convert_alpha()
+fireball_frames = load_frames_from_sheet(fireball_sheet, 52, 52, 6, scale=6)
+
+lightning_sheet = pygame.image.load("assets/images/lightning/lightning.png").convert_alpha()
+lightning_frames = load_frames_from_sheet(lightning_sheet, 42, 42, 6, scale=8)
+
+
+# Association des attaques ultimes/personnages
+ultimate_projectiles = {
+    "M.Rado": {
+        "frames": fireball_frames,
+        "speed": 15,
+        "damage": 25
+    },
+    "M.Chahine": {
+        "frames": lightning_frames,
+        "speed": 12,
+        "damage": 25
+    },
+    "Gabi": {
+        "frames": lightning_frames,
+        "speed": 20,
+        "damage": 25
+    },
+    "M.Kais": {
+        "frames": fireball_frames,
+        "speed": 15,
+        "damage": 25
+    }
+}
+
 def play_video(video_path):
     """Jouer une vidéo directement dans la fenêtre Pygame."""
     if not os.path.exists(video_path):
-        print(f"⚠️ Erreur : Le fichier vidéo {video_path} est introuvable.")
+        print(f"⚠️ Erreur : Le fichier vidéo {video_path} est introuvable.") #Vérification présence de la vidéo
         return
 
     cap = cv2.VideoCapture(video_path)
@@ -282,18 +320,6 @@ def select_character(player_key):
 
     print(f"{player_key} a choisi : {chosen_character} (Index {selected_players[player_key]})")
 
-def handle_events():
-    """Gérer les événements du jeu (comme les entrées clavier, etc.)."""
-    global run, fighter_1, fighter_2
-
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            run = False  # Ferme la fenêtre
-        elif event.type == pygame.KEYDOWN:
-            # Gérer les touches pour les actions des joueurs
-            if event.key == pygame.K_ESCAPE:  # Si on appuie sur ESC, le jeu se termine
-                run = False
-
 # Fonctions
 def draw_text(text, font, text_col, x, y):
     img = font.render(text, True, text_col)
@@ -310,9 +336,9 @@ def draw_health_bar(health, x, y):
     pygame.draw.rect(screen, BLUE, pygame.Rect(x, y, 400 * ratio, 30))
 
 def check_game_over():
-    if score[0] == 1:
+    if score[0] == 3:
         return "Joueur 1 Gagne !"
-    elif score[1] == 1:
+    elif score[1] == 3:
         return "Joueur 2 Gagne !"
     return None
 
@@ -344,14 +370,47 @@ def reset_round():
     fighter_1 = Player(1, 200, 480, False, p1_data, p1_sheet, p1_steps, p1_fx)
     fighter_2 = Player(2, 1000, 500, True, p2_data, p2_sheet, p2_steps, p2_fx)
 
+# Jauge d'énergie segmentée (couleur or)
+def draw_energy_bar_segments(energy, x, y):
+    segment_count = 5
+    segment_width = 35
+    segment_height = 15
+    spacing = 8
+    energy_per_segment = 100 / segment_count
+    active_segments = int(energy / energy_per_segment)
+    for i in range(segment_count):
+        seg_x = x + i * (segment_width + spacing)
+        color = (255, 215, 0) if i < active_segments else (60, 60, 60)
+        glow_color = (255, 255, 150, 50) if i < active_segments else None
+        if glow_color:
+            glow_surf = pygame.Surface((segment_width + 10, segment_height + 10), pygame.SRCALPHA)
+            pygame.draw.ellipse(glow_surf, glow_color, (0, 0, segment_width + 10, segment_height + 10))
+            screen.blit(glow_surf, (seg_x - 5, y - 5))
+        pygame.draw.rect(screen, color, (seg_x, y, segment_width, segment_height), border_radius=4)
+        pygame.draw.rect(screen, WHITE, (seg_x, y, segment_width, segment_height), 2, border_radius=4)
 
+# Variables globales
+fighter_1 = None
+fighter_2 = None
+projectiles = []
+score = [0, 0]
+projectiles = []
+round_over = False
 
+intro_count = 3
+last_count_update = pygame.time.get_ticks()
+rounds_joues = 0
+MAX_ROUNDS = 5
+ROUND_OVER_COOLDOWN = 2000
+
+emoji_font=pygame.font.SysFont("segoeuiemoji", 40)
 
 def main_gameplay():
-    """Boucle principale du jeu."""
-    global round_over, score
+    global round_over, score, intro_count, last_count_update, rounds_joues
+
     run = True
-    round_over_time = 0  # Ajout d'une valeur par défaut
+    round_over_time = 0
+
     music_files = [f for f in os.listdir(music_folder) if f.endswith('.mp3')]
     if music_files:
         chosen_music = random.choice(music_files)
@@ -361,52 +420,105 @@ def main_gameplay():
 
     while run:
         clock.tick(FPS)
-        screen.blit(background, (0, 0))
+        draw_background()
 
-        draw_health_bar(fighter_1.health, 20, 50)
-        draw_health_bar(fighter_2.health, 850, 50)
+        # Affichage barres et noms
+        draw_health_bar(fighter_1.health, 20, 70)
+        draw_health_bar(fighter_2.health, 850, 70)
+        draw_energy_bar_segments(fighter_1.energy, 20, 110)
+        draw_energy_bar_segments(fighter_2.energy, 850, 110)
+        # Icônes étoiles pour le score
+        stars_p1 = "💥" * score[0]
+        stars_p2 = "💥" * score[1]
 
-        fighter_1.move(SCREEN_WIDTH, SCREEN_HEIGHT, screen, fighter_2, round_over)
-        fighter_2.move(SCREEN_WIDTH, SCREEN_HEIGHT, screen, fighter_1, round_over)
+        # Afficher noms + étoiles
+        draw_text(f"{selected_players['J1']}  {stars_p1}", emoji_font, WHITE, 20, 20)
+        draw_text(f"{stars_p2}  {selected_players['J2']}", emoji_font, WHITE, 850, 20)
 
-        fighter_1.update()
-        fighter_2.update()
-        fighter_1.draw(screen)
-        fighter_2.draw(screen)
+        if intro_count <= 0:
+            # Mouvements et update
+            fighter_1.move(SCREEN_WIDTH, SCREEN_HEIGHT, screen, fighter_2, round_over)
+            fighter_2.move(SCREEN_WIDTH, SCREEN_HEIGHT, screen, fighter_1, round_over)
 
-        if not round_over:
-            if not fighter_1.alive:
-                score[1] += 1
-                round_over = True
-                round_over_time = pygame.time.get_ticks()
-            elif not fighter_2.alive:
-                score[0] += 1
-                round_over = True
-                round_over_time = pygame.time.get_ticks()
-        else:
-            # Vérifie si un joueur a gagné la partie
-            game_over_text = check_game_over()
-            if game_over_text:
-                screen.blit(victory,(0,0))
-                pygame.display.flip()
-                pygame.time.delay(5000)  # Affiche le texte pendant 5 secondes
-                run = False  # Termine la boucle principale et retourne au menu
+            # Attaques ultimes
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_a] and fighter_1.energy == 100:
+                direction = 1 if not fighter_1.flip else -1
+                name = selected_players["J1"]
+                ult = ultimate_projectiles[name]
+
+                # Point de départ ajusté vers le haut du corps
+                proj_x = fighter_1.rect.centerx
+                proj_y = fighter_1.rect.centery - 70  # Ajuste ici si besoin
+
+                projectiles.append(
+                    Projectile(proj_x, proj_y, direction, ult["frames"], ult["speed"], ult["damage"], fighter_1))
+                fighter_1.energy = 0
+
+            if keys[pygame.K_KP3] and fighter_2.energy == 100:
+                direction = 1 if not fighter_2.flip else -1
+                name = selected_players["J2"]
+                ult = ultimate_projectiles[name]
+
+                proj_x = fighter_2.rect.centerx
+                proj_y = fighter_2.rect.centery - 70  # Même principe
+
+                projectiles.append(
+                    Projectile(proj_x, proj_y, direction, ult["frames"], ult["speed"], ult["damage"], fighter_2))
+                fighter_2.energy = 0
+
+            # Projectiles
+            for projectile in projectiles:
+                projectile.update()
+                projectile.draw(screen)
+                if projectile.owner == fighter_1:
+                    projectile.check_collision(fighter_2)
+                else:
+                    projectile.check_collision(fighter_1)
+            projectiles[:] = [p for p in projectiles if p.active]
+
+            # Update perso
+            fighter_1.update()
+            fighter_2.update()
+            fighter_1.draw(screen)
+            fighter_2.draw(screen)
+
+            # Round terminé ?
+            if not round_over:
+                if not fighter_1.alive:
+                    score[1] += 1
+                    round_over = True
+                    round_over_time = pygame.time.get_ticks()
+                elif not fighter_2.alive:
+                    score[0] += 1
+                    round_over = True
+                    round_over_time = pygame.time.get_ticks()
             else:
-                # Si le round est terminé mais pas la partie, on réinitialise le round
-                if pygame.time.get_ticks() - round_over_time > ROUND_OVER_COOLDOWN:
-                    if rounds_joues < MAX_ROUNDS:
-                        reset_round()
-                    else:
-                        run = False
+                # Fin de partie, au meilleur des 3 manches
+                if score[0] == 3 or score[1] == 3:
+                    screen.blit(victory, (0, 0))
+                    pygame.display.flip()
+                    pygame.time.delay(5000)
+                    run = False
+                elif pygame.time.get_ticks() - round_over_time > ROUND_OVER_COOLDOWN:
+                    reset_round()
+        else:
+            draw_text(str(intro_count), count_font, BLUE, 540, 200)
+            draw_text(str(intro_count), count_font, WHITE, 535, 195)
+            # Affichage du compte à rebours
+            count_sound="assets/sounds/count_sound 2.mp3"
+            count_fx = pygame.mixer.Sound(count_sound)
+            count_fx.play()
+            if pygame.time.get_ticks() - last_count_update >= 1000:
+                intro_count -= 1
+                last_count_update = pygame.time.get_ticks()
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
 
         pygame.display.flip()
-
     pygame.quit()
-
 
 def main_menu():
     """Menu principal du jeu avec bouton interactif."""
