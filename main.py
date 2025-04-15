@@ -7,7 +7,6 @@ from pygame import mixer
 from player import Player
 from projectile import Projectile
 
-
 mixer.init()
 pygame.init()
 
@@ -27,7 +26,7 @@ clock = pygame.time.Clock()
 FPS = 60
 
 # Musique et effets sonores
-music_folder = "assets/sounds/musics"
+music_folder = "assets/sounds/music_folder"
 music_files = [f for f in os.listdir(music_folder) if f.endswith('.mp3')]
 if music_files:
     chosen_music = random.choice(music_files)
@@ -44,7 +43,7 @@ punch_fx.set_volume(0.75)
 electricity_fx = pygame.mixer.Sound("assets/sounds/electricity_sound.mp3")
 electricity_fx.set_volume(0.75)
 
-# Données des personnages
+shake = 0
 background = pygame.image.load("assets/images/Arene_HD.jpeg").convert_alpha()
 versus = pygame.image.load("assets/images/versus1.png").convert_alpha()
 victory = pygame.image.load("assets/images/victory2.png").convert_alpha()
@@ -96,7 +95,6 @@ pygame.mixer.music.play(-1)
 
 # Configuration de la fenêtre
 WIDTH, HEIGHT = 1280, 720
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Menu du Jeu")
 
 # Chargement des images de l'interface
@@ -167,11 +165,13 @@ def load_frames_from_sheet(sheet, frame_width, frame_height, count, scale=1):
 
 # Données attaques ultimes
 fireball_sheet = pygame.image.load("assets/images/blue_fireball/blue_fireball.png").convert_alpha()
-fireball_frames = load_frames_from_sheet(fireball_sheet, 52, 52, 6, scale=6)
+fireball_frames = load_frames_from_sheet(fireball_sheet, 52, 52, 6, scale=9)
 
 lightning_sheet = pygame.image.load("assets/images/lightning/lightning.png").convert_alpha()
-lightning_frames = load_frames_from_sheet(lightning_sheet, 42, 42, 6, scale=8)
+lightning_frames = load_frames_from_sheet(lightning_sheet, 42, 42, 6, scale=9)
 
+magic_sheet = pygame.image.load("assets/images/magic_spe/magic_spe.png").convert_alpha()
+magic_frames = load_frames_from_sheet(magic_sheet, 50, 50, 6, scale=8)
 
 # Association des attaques ultimes/personnages
 ultimate_projectiles = {
@@ -181,8 +181,8 @@ ultimate_projectiles = {
         "damage": 25
     },
     "M.Chahine": {
-        "frames": lightning_frames,
-        "speed": 12,
+        "frames": magic_frames,
+        "speed": 25,
         "damage": 25
     },
     "Gabi": {
@@ -197,6 +197,28 @@ ultimate_projectiles = {
     }
 }
 
+ultimate_sounds = {
+    "M.Rado": {
+        "cast": pygame.mixer.Sound("assets/sounds/rado_cast.mp3"),
+        "hit": pygame.mixer.Sound("assets/sounds/rado_hit.mp3")
+    },
+    "M.Chahine": {
+        "cast": pygame.mixer.Sound("assets/sounds/chahine_cast.mp3"),
+        "hit": pygame.mixer.Sound("assets/sounds/chahine_hit.mp3")
+    },
+    "Gabi": {
+        "cast": pygame.mixer.Sound("assets/sounds/gabi_cast.mp3"),
+        "hit": pygame.mixer.Sound("assets/sounds/gabi_hit.mp3")
+    },
+    "M.Kais": {
+        "cast": pygame.mixer.Sound("assets/sounds/kais_cast.mp3"),
+        "hit": pygame.mixer.Sound("assets/sounds/kais_hit.mp3")
+    }
+}
+for sounds in ultimate_sounds.values():
+    sounds["cast"].set_volume(0.7)
+    sounds["hit"].set_volume(0.9)
+
 def play_video(video_path):
     """Jouer une vidéo directement dans la fenêtre Pygame."""
     if not os.path.exists(video_path):
@@ -209,7 +231,7 @@ def play_video(video_path):
         print(f"⚠️ Erreur : Impossible d'ouvrir la vidéo {video_path}.")
         return
 
-    clock = pygame.time.Clock()
+    delay = pygame.time.Clock()
 
     while cap.isOpened():
         ret, frame = cap.read()
@@ -225,7 +247,7 @@ def play_video(video_path):
         screen.blit(frame_surface, (0, 0))
         pygame.display.flip()
 
-        clock.tick(25)
+        delay.tick(25)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -235,7 +257,6 @@ def play_video(video_path):
 
     cap.release()
     cv2.destroyAllWindows()
-
 
 def select_player():
     """Écran pour choisir les joueurs."""
@@ -275,6 +296,7 @@ def select_player():
 
 def select_character(player_key):
     """Écran pour choisir un personnage avec stockage dans le dictionnaire."""
+    global selected_players
     selected_index = 0
     running = True
 
@@ -352,8 +374,9 @@ character_mapping = {
 
 def reset_round():
     """Réinitialise le round en prenant en compte les personnages sélectionnés."""
-    global fighter_1, fighter_2, intro_count, round_over, rounds_joues
+    global fighter_1, fighter_2, intro_count, round_over, rounds_joues, countdown_started, count_start_time, shake
 
+    shake = 0
     rounds_joues += 1
     intro_count = 3
     round_over = False
@@ -369,6 +392,10 @@ def reset_round():
     # Créer les objets Player avec les données correspondantes
     fighter_1 = Player(1, 200, 480, False, p1_data, p1_sheet, p1_steps, p1_fx)
     fighter_2 = Player(2, 1000, 500, True, p2_data, p2_sheet, p2_steps, p2_fx)
+
+    countdown_started = False
+    count_start_time = 0
+
 
 # Jauge d'énergie segmentée (couleur or)
 def draw_energy_bar_segments(energy, x, y):
@@ -394,10 +421,9 @@ fighter_1 = None
 fighter_2 = None
 projectiles = []
 score = [0, 0]
-projectiles = []
 round_over = False
 
-intro_count = 3
+intro_count = 4
 last_count_update = pygame.time.get_ticks()
 rounds_joues = 0
 MAX_ROUNDS = 5
@@ -405,22 +431,109 @@ ROUND_OVER_COOLDOWN = 2000
 
 emoji_font=pygame.font.SysFont("segoeuiemoji", 40)
 
+def trigger_shake(intensity):
+    global shake
+    shake = intensity
+
+def pause_menu(background_snapshot):
+    font = pygame.font.SysFont("arial", 50)
+    menu_options = ["Reprendre", "Retour perso", "Quitter"]
+    selected = 0
+    running = True
+
+    # Création des rectangles de bouton
+    button_rects = []
+    for i in range(len(menu_options)):
+        rect = pygame.Rect(SCREEN_WIDTH//2 - 150, 250 + i * 100, 300, 70)
+        button_rects.append(rect)
+
+    while running:
+        # Afficher le fond figé du jeu
+        screen.blit(background_snapshot, (0, 0))
+
+        # Superposition grise semi-transparente
+        gray_overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
+        gray_overlay.fill((50, 50, 50, 180))  # gris foncé semi-transparent
+        screen.blit(gray_overlay, (0, 0))
+
+        # Dessin des boutons
+        for i, rect in enumerate(button_rects):
+            if rect.collidepoint(pygame.mouse.get_pos()):
+                selected = i
+
+            color = (200, 200, 200) if i == selected else (100, 100, 100)
+            pygame.draw.rect(screen, color, rect, border_radius=8)
+
+            # Texte centré dans le bouton
+            text_surf = font.render(menu_options[i], True, WHITE)
+            text_rect = text_surf.get_rect(center=rect.center)
+            screen.blit(text_surf, text_rect)
+
+        pygame.display.flip()
+
+        # Gestion des événements
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_DOWN:
+                    selected = (selected + 1) % len(menu_options)
+                elif event.key == pygame.K_UP:
+                    selected = (selected - 1) % len(menu_options)
+                elif event.key == pygame.K_RETURN:
+                    if selected == 0:
+                        return "resume"
+                    elif selected == 1:
+                        return "menu"
+                    elif selected == 2:
+                        pygame.quit()
+                        exit()
+
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:  # clic gauche
+                    for i, rect in enumerate(button_rects):
+                        if rect.collidepoint(event.pos):
+                            if i == 0:
+                                return "resume"
+                            elif i == 1:
+                                return "menu"
+                            elif i == 2:
+                                pygame.quit()
+                                exit()
+
 def main_gameplay():
-    global round_over, score, intro_count, last_count_update, rounds_joues
+    global round_over, score, intro_count, last_count_update, rounds_joues, countdown_started, count_start_time, count_complete, shake, fighter_1, fighter_2
 
     run = True
     round_over_time = 0
+    count_complete = False
 
-    music_files = [f for f in os.listdir(music_folder) if f.endswith('.mp3')]
-    if music_files:
-        chosen_music = random.choice(music_files)
-        music_path = os.path.join(music_folder, chosen_music)
-        pygame.mixer.music.load(music_path)
+    reset_round()
+    """draw_background()
+    pygame.display.flip()
+    pygame.time.delay(500)  # court délai pour forcer le redraw"""
+
+    check_music = [f for f in os.listdir(music_folder) if f.endswith('.mp3')]
+    if check_music:
+        random_music = random.choice(check_music)
+        mp3_folder = os.path.join(music_folder, random_music)
+        pygame.mixer.music.load(mp3_folder)
         pygame.mixer.music.play(-1, 0.0, 5000)
+
+    countdown_started = False
+    count_start_time = 0
 
     while run:
         clock.tick(FPS)
-        draw_background()
+        if shake > 0:
+            shake_x = random.randint(-10, 10)
+            shake_y = random.randint(-10, 10)
+            screen.blit(background, (shake_x, shake_y))
+            shake -= 1
+        else:
+            draw_background()
 
         # Affichage barres et noms
         draw_health_bar(fighter_1.health, 20, 70)
@@ -448,11 +561,9 @@ def main_gameplay():
                 ult = ultimate_projectiles[name]
 
                 # Point de départ ajusté vers le haut du corps
-                proj_x = fighter_1.rect.centerx
-                proj_y = fighter_1.rect.centery - 70  # Ajuste ici si besoin
-
-                projectiles.append(
-                    Projectile(proj_x, proj_y, direction, ult["frames"], ult["speed"], ult["damage"], fighter_1))
+                proj_x, proj_y = fighter_1.get_projectile_origin()  # Même principe
+                ultimate_sounds[name]["cast"].play()
+                projectiles.append(Projectile(proj_x, proj_y, direction, ult["frames"], ult["speed"], ult["damage"], fighter_1, name, hit_sound=ultimate_sounds[name]["hit"],trigger_shake=trigger_shake))
                 fighter_1.energy = 0
 
             if keys[pygame.K_KP3] and fighter_2.energy == 100:
@@ -460,11 +571,9 @@ def main_gameplay():
                 name = selected_players["J2"]
                 ult = ultimate_projectiles[name]
 
-                proj_x = fighter_2.rect.centerx
-                proj_y = fighter_2.rect.centery - 70  # Même principe
-
-                projectiles.append(
-                    Projectile(proj_x, proj_y, direction, ult["frames"], ult["speed"], ult["damage"], fighter_2))
+                proj_x, proj_y = fighter_2.get_projectile_origin() # Même principe
+                ultimate_sounds[name]["cast"].play()
+                projectiles.append(Projectile(proj_x, proj_y, direction, ult["frames"], ult["speed"], ult["damage"], fighter_2, name, hit_sound=ultimate_sounds[name]["hit"],trigger_shake=trigger_shake))
                 fighter_2.energy = 0
 
             # Projectiles
@@ -489,10 +598,12 @@ def main_gameplay():
                     score[1] += 1
                     round_over = True
                     round_over_time = pygame.time.get_ticks()
+                    shake = 50
                 elif not fighter_2.alive:
                     score[0] += 1
                     round_over = True
                     round_over_time = pygame.time.get_ticks()
+                    shake = 50
             else:
                 # Fin de partie, au meilleur des 3 manches
                 if score[0] == 3 or score[1] == 3:
@@ -503,22 +614,59 @@ def main_gameplay():
                 elif pygame.time.get_ticks() - round_over_time > ROUND_OVER_COOLDOWN:
                     reset_round()
         else:
-            draw_text(str(intro_count), count_font, BLUE, 540, 200)
-            draw_text(str(intro_count), count_font, WHITE, 535, 195)
             # Affichage du compte à rebours
-            count_sound="assets/sounds/count_sound 2.mp3"
+            count_sound="assets/sounds/count_sound0.mp3"
             count_fx = pygame.mixer.Sound(count_sound)
-            count_fx.play()
-            if pygame.time.get_ticks() - last_count_update >= 1000:
-                intro_count -= 1
-                last_count_update = pygame.time.get_ticks()
+            if not countdown_started:
+                count_fx.play()
+                count_start_time = pygame.time.get_ticks()
+                countdown_started = True
+
+            elapsed_time = pygame.time.get_ticks() - count_start_time
+
+            if elapsed_time < 900:
+                draw_text("3", count_font, BLUE, 540, 200)
+                draw_text("3", count_font, WHITE, 535, 195)
+            elif elapsed_time < 1500:
+                draw_text("2", count_font, BLUE, 540, 200)
+                draw_text("2", count_font, WHITE, 535, 195)
+            elif elapsed_time < 1900:
+                draw_text("1", count_font, BLUE, 540, 200)
+                draw_text("1", count_font, WHITE, 535, 195)
+            elif elapsed_time < 2400:
+                draw_text("GO!", count_font, BLUE, 340, 200)
+                draw_text("GO!", count_font, WHITE, 335, 195)
+            else:
+                intro_count = 0  # Fin du compte à rebours
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
 
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    paused_screen = screen.copy()
+                    action = pause_menu(paused_screen)
+                    if action == "menu":
+                        pygame.mixer.music.stop()  # 🔇 Stop combat music
+                        pygame.mixer.music.load("assets/sounds/lobby_sound.wav")
+                        pygame.mixer.music.fadeout(1000)  # 🔇 Fondu sur 1 seconde
+                        pygame.time.delay(1000)  # Attend que le fondu se termine
+
+                        pygame.mixer.music.load("assets/sounds/lobby_sound.wav")
+                        pygame.mixer.music.set_volume(0.5)
+                        pygame.mixer.music.play(-1)
+
+                        pygame.mixer.music.set_volume(0.5)
+                        pygame.mixer.music.play(-1)
+
+                        select_player()
+                        main_gameplay()
+                        return
+                    elif action == "resume":
+                        continue  # Reprendre le jeu
+
         pygame.display.flip()
-    pygame.quit()
 
 def main_menu():
     """Menu principal du jeu avec bouton interactif."""
@@ -537,7 +685,6 @@ def main_menu():
 
         pygame.display.flip()
     pygame.quit()
-
 
 # Lancer le menu principal
 main_menu()

@@ -1,6 +1,6 @@
 import pygame
 
-class Player():
+class Player:
 
     def __init__(self, player, x, y, flip, data, sprite_sheet, animation_steps, sound):
         self.player = player
@@ -25,6 +25,7 @@ class Player():
         self.health = 100
         self.energy = 0  # Jauge d'énergie de 0 à 100
         self.alive = True
+        self.can_double_jump = True
 
     def load_images(self, sprite_sheet, animation_steps):
         animation_list = []
@@ -38,8 +39,8 @@ class Player():
         return animation_list
 
     def move(self, screen_width, screen_height, surface, target, round_over):
-        SPEED = 10
-        GRAVITY = 2
+        speed = 10
+        gravity = 2
         dx = 0
         dy = 0
         self.running = False
@@ -50,14 +51,21 @@ class Player():
         if self.attacking == False and self.alive == True and round_over == False:
             if self.player == 1:
                 if key[pygame.K_q]:
-                    dx = -SPEED
+                    dx = -speed
                     self.running = True
                 if key[pygame.K_d]:
-                    dx = SPEED
+                    dx = speed
                     self.running = True
-                if key[pygame.K_z] and self.jump == False:
+                if key[pygame.K_z] and not self.jump:
                     self.vel_y = -30
                     self.jump = True
+                    self.can_double_jump = True
+
+                elif key[pygame.K_2] and self.jump and self.can_double_jump:
+                    self.vel_y = -25
+                    self.can_double_jump = False
+                    #print("Double saut J1 !")
+
                 if key[pygame.K_e] or key[pygame.K_r]:
                     self.attack(surface, target)
                     if key[pygame.K_e]:
@@ -67,14 +75,21 @@ class Player():
 
             if self.player == 2:
                 if key[pygame.K_LEFT]:
-                    dx = -SPEED
+                    dx = -speed
                     self.running = True
                 if key[pygame.K_RIGHT]:
-                    dx = SPEED
+                    dx = speed
                     self.running = True
-                if key[pygame.K_UP] and self.jump == False:
+                if key[pygame.K_UP] and not self.jump:
                     self.vel_y = -30
                     self.jump = True
+                    self.can_double_jump = True
+
+                elif key[pygame.K_RSHIFT] and self.jump and self.can_double_jump:
+                    self.vel_y = -30
+                    self.can_double_jump = False
+                    #print("Double saut J2 !")
+
                 if key[pygame.K_KP1] or key[pygame.K_KP2]:
                     self.attack(surface, target)
                     if key[pygame.K_KP1]:
@@ -82,7 +97,7 @@ class Player():
                     if key[pygame.K_KP2]:
                         self.attack_type = 2
 
-        self.vel_y += GRAVITY
+        self.vel_y += gravity
         dy += self.vel_y
 
         if self.rect.left + dx < 0:
@@ -92,6 +107,7 @@ class Player():
         if self.rect.bottom + dy > screen_height - 55:
             self.vel_y = 0
             self.jump = False
+            self.can_double_jump = True
             dy = screen_height - 55 - self.rect.bottom
 
         if target.rect.centerx > self.rect.centerx:
@@ -110,16 +126,16 @@ class Player():
             self.health = 0
             self.alive = False
             self.update_action(6)
-        elif self.hit == True:
+        elif self.hit:
             self.update_action(5)
-        elif self.attacking == True:
+        elif self.attacking:
             if self.attack_type == 1:
                 self.update_action(3)
             elif self.attack_type == 2:
                 self.update_action(4)
-        elif self.jump == True:
+        elif self.jump:
             self.update_action(2)
-        elif self.running == True:
+        elif self.running:
             self.update_action(1)
         else:
             self.update_action(0)
@@ -132,7 +148,7 @@ class Player():
             self.update_time = pygame.time.get_ticks()
 
         if self.frame_index >= len(self.animation_list[self.action]):
-            if self.alive == False:
+            if not self.alive:
                 self.frame_index = len(self.animation_list[self.action]) - 1
             else:
                 self.frame_index = 0
@@ -169,7 +185,14 @@ class Player():
         surface.blit(img, (self.rect.x - (self.offset[0] * self.image_scale), self.rect.y - (self.offset[1] * self.image_scale)))
 
     def get_projectile_origin(self):
-        """Retourne un point ajusté (torse/poitrine) pour faire partir les projectiles."""
-        origin_x = self.rect.centerx
-        origin_y = self.rect.top + self.rect.height // 3
+        """Retourne la vraie position visuelle (milieu du torse) du sprite à l'écran."""
+        draw_x = self.rect.x - (self.offset[0] * self.image_scale)
+        draw_y = self.rect.y - (self.offset[1] * self.image_scale)
+
+        sprite_width = self.size * self.image_scale
+        sprite_height = self.size * self.image_scale
+
+        origin_x = draw_x + sprite_width // 2
+        origin_y = draw_y + sprite_height // 2.4  # torse
+
         return origin_x, origin_y

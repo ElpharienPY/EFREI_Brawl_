@@ -1,7 +1,7 @@
 import pygame
 
 class Projectile:
-    def __init__(self, x, y, direction, frames, speed, damage, owner):
+    def __init__(self, x, y, direction, frames, speed, damage, owner, player_name, hit_sound, trigger_shake):
         self.frames = frames  # Liste de frames Pygame
         self.frame_index = 0
         self.frame_timer = 0
@@ -22,13 +22,16 @@ class Projectile:
         self.speed = speed
         self.damage = damage
         self.owner = owner  # Référence au joueur qui a lancé le projectile
+        self.player_name = player_name
+        self.hit_sound = hit_sound
         self.active = True
+        self.trigger_shake = trigger_shake
 
     def move(self):
         self.rect.x += self.speed * self.direction
 
         # Désactive le projectile s'il sort de l'écran
-        if self.rect.right < 0 or self.rect.left > 1280:
+        if self.rect.right < 0 or self.rect.left >= 1280:
             self.active = False
 
     def animate(self):
@@ -47,8 +50,14 @@ class Projectile:
 
     def check_collision(self, target):
         if self.rect.colliderect(target.rect) and self.active:
+            self.hit_sound.play()
             target.health -= self.damage
             target.hit = True
-            target.energy = min(target.energy + 10, 100)  # Il gagne peu d'énergie en se faisant toucher
-            self.active = False  # Projectile disparaît après impact
+            target.energy = min(target.energy + 5, 100)
+            self.active = False
+
+            self.trigger_shake(30)
+
+
+
 
