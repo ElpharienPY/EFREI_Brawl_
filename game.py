@@ -21,7 +21,7 @@ WHITE = (255, 255, 255)
 # FPS CONTRÔLE
 clock = pygame.time.Clock()
 FPS = 60
-
+"""
 # Musique et effets sonores
 music_folder = "assets/sounds/musics"
 music_files = [f for f in os.listdir(music_folder) if f.endswith('.mp3')]
@@ -29,7 +29,7 @@ if music_files:
     chosen_music = random.choice(music_files)
     music_path = os.path.join(music_folder, chosen_music)
     pygame.mixer.music.load(music_path)
-    pygame.mixer.music.play(-1, 0.0, 5000)
+    pygame.mixer.music.play(-1, 0.0, 5000)"""
 
 sword_fx = pygame.mixer.Sound("assets/sounds/sword.wav")
 sword_fx.set_volume(0.5)
@@ -110,12 +110,12 @@ def reset_round():
     rounds_joues += 1
     intro_count = 3
     round_over = False
-    fighter_1 = Player(1, 200, 480, False, WARRIOR_DATA, warrior_sheet, WARRIOR_ANIMATION_STEPS, electricity_fx)  # warrior
+    fighter_1 = Player(1, 200, 480, False, WARRIOR_DATA, warrior_sheet, WARRIOR_ANIMATION_STEPS, electricity_fx,joystick_id=0)  # warrior
     # fighter_1= Player(1,200,480,False,WIZARD_DATA,wizard_sheet,WIZARD_ANIMATION_STEPS,magic_fx)
     # fighter_1= Player(1,200, 500, False, KING_DATA,king_sheet, KING_ANIMATION_STEPS,sword_fx) #king
     # fighter_1= Player(1,200,480,False,FIGHTER_DATA,fighter_sheet,FIGHTER_ANIMATION_STEPS,punch_fx) #fighter
 
-    fighter_2 = Player(2, 1000, 500, True, WARRIOR_DATA, warrior_sheet, WARRIOR_ANIMATION_STEPS, electricity_fx)  # warrior
+    fighter_2 = Player(2, 1000, 500, True, WARRIOR_DATA, warrior_sheet, WARRIOR_ANIMATION_STEPS, electricity_fx,joystick_id=1)  # warrior
     # fighter_2 = Player(2 ,1000, 500,True, WIZARD_DATA,wizard_sheet,WIZARD_ANIMATION_STEPS,magic_fx) #wizard
     # fighter_2 = Player(2 ,1000, 500,True, KING_DATA,king_sheet, KING_ANIMATION_STEPS,sword_fx) #king
     # fighter_2 = Player(2 ,1000, 500,True, FIGHTER_DATA,fighter_sheet,FIGHTER_ANIMATION_STEPS,punch_fx) #fighter
@@ -142,8 +142,8 @@ while run:
     draw_text("P2: " + str(score[1]), score_font, BLUE, 1145, 90)
 
     if intro_count <= 0:
-        fighter_1.move(SCREEN_WIDTH, SCREEN_HEIGHT, screen, fighter_2, round_over)
-        fighter_2.move(SCREEN_WIDTH, SCREEN_HEIGHT, screen, fighter_1, round_over)
+        fighter_1.move(SCREEN_WIDTH, SCREEN_HEIGHT)
+        fighter_2.move(SCREEN_WIDTH, SCREEN_HEIGHT)
     else:
         draw_text(str(intro_count), count_font, BLUE, 540, 200)
         draw_text(str(intro_count), count_font, WHITE, 535, 195)

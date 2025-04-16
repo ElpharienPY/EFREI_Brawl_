@@ -258,6 +258,42 @@ def play_video(video_path):
     cap.release()
     cv2.destroyAllWindows()
 
+control_modes = {"J1": "clavier", "J2": "clavier"}
+
+def choose_controls():
+    global control_modes
+
+    font = pygame.font.SysFont("arial", 40)
+
+    for player in ["J1", "J2"]:
+        choosing = True
+        mode = "clavier"
+
+        while choosing:
+            screen.fill((0, 0, 0))
+            draw_text(f"{player} : Choisir le mode de contrôle", font, WHITE, 250, 150)
+
+            # Affichage visuel du choix actuel
+            draw_text("← Clavier", font, WHITE if mode == "clavier" else (100, 100, 100), 300, 250)
+            draw_text("→ Manette", font, WHITE if mode == "manette" else (100, 100, 100), 600, 250)
+
+            pygame.display.flip()
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    exit()
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_LEFT:
+                        mode = "clavier"
+                    elif event.key == pygame.K_RIGHT:
+                        mode = "manette"
+                    elif event.key == pygame.K_RETURN:
+                        control_modes[player] = mode
+                        print(f">>> {player} joue avec : {mode}")
+                        choosing = False
+
+
 def select_player():
     """Écran pour choisir les joueurs."""
     global selected_players
@@ -331,10 +367,10 @@ def select_character(player_key):
     # Initialiser le personnage dans le gameplay
     if player_key == "J1":
         global fighter_1
-        fighter_1 = Player(1, 200, 480, False, character_info["data"], character_info["sheet"], character_info["animation_steps"], character_info["effect"])
+        fighter_1 = Player(1, 200, 480, False, character_info["data"], character_info["sheet"], character_info["animation_steps"], character_info["effect"],control_mode=control_modes["J1"], joystick_id=0)
     else:
         global fighter_2
-        fighter_2 = Player(2, 1000, 500, True, character_info["data"], character_info["sheet"], character_info["animation_steps"], character_info["effect"])
+        fighter_2 = Player(2, 1000, 500, True, character_info["data"], character_info["sheet"], character_info["animation_steps"], character_info["effect"],control_mode=control_modes["J2"], joystick_id=1)
 
     # Jouer la vidéo du personnage sélectionné
     if chosen_character in character_videos:
@@ -390,8 +426,8 @@ def reset_round():
     p2_data, p2_sheet, p2_steps, p2_fx = character_mapping[player2_choice]
 
     # Créer les objets Player avec les données correspondantes
-    fighter_1 = Player(1, 200, 480, False, p1_data, p1_sheet, p1_steps, p1_fx)
-    fighter_2 = Player(2, 1000, 500, True, p2_data, p2_sheet, p2_steps, p2_fx)
+    fighter_1 = Player(1, 200, 480, False, p1_data, p1_sheet, p1_steps, p1_fx,control_mode=control_modes["J1"], joystick_id=0)
+    fighter_2 = Player(2, 1000, 500, True, p2_data, p2_sheet, p2_steps, p2_fx,control_mode=control_modes["J2"], joystick_id=1)
 
     countdown_started = False
     count_start_time = 0
@@ -566,6 +602,18 @@ def main_gameplay():
                 projectiles.append(Projectile(proj_x, proj_y, direction, ult["frames"], ult["speed"], ult["damage"], fighter_1, name, hit_sound=ultimate_sounds[name]["hit"],trigger_shake=trigger_shake))
                 fighter_1.energy = 0
 
+            if fighter_1.control_mode == "manette" and fighter_1.joystick:
+                if fighter_1.joystick.get_button(3) and fighter_1.energy == 100:
+                    name = selected_players["J1"]
+                    ult = ultimate_projectiles[name]
+                    hit_sound = ultimate_sounds[name]["hit"]
+                    proj_x, proj_y = fighter_1.get_projectile_origin()
+                    projectiles.append(
+                        Projectile(proj_x, proj_y, 1 if not fighter_1.flip else -1, ult["frames"], ult["speed"],
+                                   ult["damage"], fighter_1, name, hit_sound, trigger_shake))
+                    ultimate_sounds[name]["cast"].play()
+                    fighter_1.energy = 0
+
             if keys[pygame.K_KP3] and fighter_2.energy == 100:
                 direction = 1 if not fighter_2.flip else -1
                 name = selected_players["J2"]
@@ -575,6 +623,19 @@ def main_gameplay():
                 ultimate_sounds[name]["cast"].play()
                 projectiles.append(Projectile(proj_x, proj_y, direction, ult["frames"], ult["speed"], ult["damage"], fighter_2, name, hit_sound=ultimate_sounds[name]["hit"],trigger_shake=trigger_shake))
                 fighter_2.energy = 0
+
+            # J2 attaque ultime via manette
+            if fighter_2.control_mode == "manette" and fighter_2.joystick:
+                if fighter_2.joystick.get_button(3) and fighter_2.energy == 100:
+                    name = selected_players["J2"]
+                    ult = ultimate_projectiles[name]
+                    hit_sound = ultimate_sounds[name]["hit"]
+                    proj_x, proj_y = fighter_2.get_projectile_origin()
+                    projectiles.append(
+                        Projectile(proj_x, proj_y, 1 if not fighter_2.flip else -1, ult["frames"], ult["speed"],
+                                   ult["damage"], fighter_2, name, hit_sound, trigger_shake))
+                    ultimate_sounds[name]["cast"].play()
+                    fighter_2.energy = 0
 
             # Projectiles
             for projectile in projectiles:
@@ -679,6 +740,7 @@ def main_menu():
             if event.type == pygame.QUIT:
                 running = False
             elif event.type == pygame.MOUSEBUTTONDOWN and button_rect.collidepoint(event.pos):
+                choose_controls()
                 select_player()
                 main_gameplay()
                 return
