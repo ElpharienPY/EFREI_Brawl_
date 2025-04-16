@@ -436,8 +436,8 @@ def trigger_shake(intensity):
     shake = intensity
 
 def pause_menu(background_snapshot):
-    font = pygame.font.SysFont("arial", 50)
-    menu_options = ["Reprendre", "Retour perso", "Quitter"]
+    pause_font = pygame.font.Font("assets/fonts/neo-latina-demo-FFP.ttf", 55)
+    menu_options = ["Reprendre", "Menu", "Quitter"]
     selected = 0
     running = True
 
@@ -465,7 +465,7 @@ def pause_menu(background_snapshot):
             pygame.draw.rect(screen, color, rect, border_radius=8)
 
             # Texte centré dans le bouton
-            text_surf = font.render(menu_options[i], True, WHITE)
+            text_surf = pause_font.render(menu_options[i], True, BLUE)
             text_rect = text_surf.get_rect(center=rect.center)
             screen.blit(text_surf, text_rect)
 

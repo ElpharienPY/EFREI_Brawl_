@@ -60,6 +60,15 @@ python main.py
 
 ### 1️⃣ Sélection des Personnages ✨
 Chaque joueur peut choisir parmi les quatre personnages disponibles, chacun ayant ses propres caractéristiques et compétences spéciales. ⚡
+## 🧩 Personnages disponibles
+
+| Nom        | Type      | Attaque Ultime   |
+|------------|-----------|------------------|
+| M.Rado     | Boxeur    | Explosion de feu |
+| M.Chahine  | Roi       | Rayon royal      |
+| Gabi       | Chevalier | Foudre           |
+| M.Kais     | Sorcier   | Boule de feu     |
+
 
 ### 2️⃣ Combat ⚔️🔥
 Le gameplay se déroule dans une arène où les joueurs s'affrontent en utilisant des attaques de mêlée et des compétences spéciales. Des effets sonores et des animations rendent chaque attaque plus immersive. 💥
@@ -70,7 +79,12 @@ Des morceaux de musique sont joués en fond sonore pendant le combat, et chaque 
 ## **🎮 Commandes**
 Voici les commandes que vous pouvez utiliser dans le jeu :
 
-- **⏹️ Échap (ESC)** : Quitter le jeu à tout moment.
+- **⏹️ Échap (ESC)** : Ouverture du menu pause
+    ### 🧩 Commandes disponibles
+    
+    | Retour | Menu | Quitter |
+    |--------|------|---------|
+- 
 - **⬅️➡️ Flèche droite / Flèche gauche** : Naviguer dans les options de sélection des personnages.
 - **⏭️ Entrée (Enter)** : Valider le choix du personnage.
 - **1️⃣ / 2️⃣** : Sélectionner les personnages pour les joueurs 1 et 2.
@@ -78,10 +92,14 @@ Voici les commandes que vous pouvez utiliser dans le jeu :
 ### **👤 Joueur 1**
 - **Z, Q, S, D** : Pour se déplacer 🚶‍♂️
 - **E, R** : Pour attaquer 🥊
+- **'2'** : Double saut
+- **A** : Attaque ultime 
 
 ### **👤 Joueur 2**
 - **⬆️⬇️⬅️➡️** : Pour se déplacer 🚶‍♂️
 - **num1, num2** : Pour attaquer 🥊
+- **'R_SHIFT'** : Double saut
+- **num3** : Attaque ultime 
 
 ## **📸 Screenshots**
 Voici quelques captures d'écran du jeu pour vous donner un aperçu de l'interface et du gameplay :
