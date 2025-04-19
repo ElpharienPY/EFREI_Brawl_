@@ -273,7 +273,6 @@ def choose_controls():
             screen.fill((0, 0, 0))
             draw_text(f"{player} : Choisir le mode de contrôle", font, WHITE, 250, 150)
 
-            # Affichage visuel du choix actuel
             draw_text("← Clavier", font, WHITE if mode == "clavier" else (100, 100, 100), 300, 250)
             draw_text("→ Manette", font, WHITE if mode == "manette" else (100, 100, 100), 600, 250)
 
@@ -290,8 +289,8 @@ def choose_controls():
                         mode = "manette"
                     elif event.key == pygame.K_RETURN:
                         control_modes[player] = mode
-                        print(f">>> {player} joue avec : {mode}")
                         choosing = False
+
 
 
 def select_player():
@@ -332,7 +331,7 @@ def select_player():
 
 def select_character(player_key):
     """Écran pour choisir un personnage avec stockage dans le dictionnaire."""
-    global selected_players
+    global selected_players, fighter_1, fighter_2
     selected_index = 0
     running = True
 
@@ -355,28 +354,64 @@ def select_character(player_key):
                 elif event.key == pygame.K_LEFT:
                     selected_index = (selected_index - 1) % len(character_names)
                 elif event.key == pygame.K_RETURN:
-                    selected_players[player_key] = character_names[selected_index]  # Stocke le nom du personnage
+                    selected_players[player_key] = character_names[selected_index]
                     running = False
 
         pygame.display.flip()
 
-    # Récupérer les données associées au personnage choisi
+    # Récupérer les données du personnage choisi
     chosen_character = selected_players[player_key]
-    character_info = character_data[chosen_character]  # Obtenir les données associées au personnage choisi
+    character_info = character_data[chosen_character]
 
-    # Initialiser le personnage dans le gameplay
+    # Attribution intelligente du joystick_id
+    joystick_id = None
+    nb_manettes = pygame.joystick.get_count()
+
+    if control_modes[player_key] == "manette":
+        if player_key == "J1":
+            if nb_manettes >= 1:
+                joystick_id = 0
+            else:
+                print("⚠️ Aucune manette détectée pour Joueur 1")
+        elif player_key == "J2":
+            if control_modes["J1"] == "manette":
+                if nb_manettes >= 2:
+                    joystick_id = 1
+                else:
+                    print("⚠️ Une seule manette détectée, déjà utilisée par Joueur 1")
+            else:
+                if nb_manettes >= 1:
+                    joystick_id = 0
+                else:
+                    print("⚠️ Aucune manette détectée pour Joueur 2")
+
+    # Initialisation du joueur
     if player_key == "J1":
-        global fighter_1
-        fighter_1 = Player(1, 200, 480, False, character_info["data"], character_info["sheet"], character_info["animation_steps"], character_info["effect"],control_mode=control_modes["J1"], joystick_id=0)
+        fighter_1 = Player(
+            1, 200, 480, False,
+            character_info["data"],
+            character_info["sheet"],
+            character_info["animation_steps"],
+            character_info["effect"],
+            control_mode=control_modes["J1"],
+            joystick_id=joystick_id
+        )
     else:
-        global fighter_2
-        fighter_2 = Player(2, 1000, 500, True, character_info["data"], character_info["sheet"], character_info["animation_steps"], character_info["effect"],control_mode=control_modes["J2"], joystick_id=1)
+        fighter_2 = Player(
+            2, 1000, 500, True,
+            character_info["data"],
+            character_info["sheet"],
+            character_info["animation_steps"],
+            character_info["effect"],
+            control_mode=control_modes["J2"],
+            joystick_id=joystick_id
+        )
 
-    # Jouer la vidéo du personnage sélectionné
+    # Vidéo d’intro
     if chosen_character in character_videos:
         play_video(character_videos[chosen_character])
 
-    print(f"{player_key} a choisi : {chosen_character} (Index {selected_players[player_key]})")
+    print(f"{player_key} a choisi : {chosen_character} avec {control_modes[player_key]} (Joystick {joystick_id})")
 
 # Fonctions
 def draw_text(text, font, text_col, x, y):
@@ -410,9 +445,8 @@ character_mapping = {
 
 def reset_round():
     """Réinitialise le round en prenant en compte les personnages sélectionnés."""
-    global fighter_1, fighter_2, intro_count, round_over, rounds_joues, countdown_started, count_start_time, shake
+    global fighter_1, fighter_2, intro_count, round_over, rounds_joues
 
-    shake = 0
     rounds_joues += 1
     intro_count = 3
     round_over = False
@@ -421,16 +455,46 @@ def reset_round():
     player1_choice = selected_players["J1"]
     player2_choice = selected_players["J2"]
 
-    # Obtenir les données des personnages sélectionnés
     p1_data, p1_sheet, p1_steps, p1_fx = character_mapping[player1_choice]
     p2_data, p2_sheet, p2_steps, p2_fx = character_mapping[player2_choice]
 
-    # Créer les objets Player avec les données correspondantes
-    fighter_1 = Player(1, 200, 480, False, p1_data, p1_sheet, p1_steps, p1_fx,control_mode=control_modes["J1"], joystick_id=0)
-    fighter_2 = Player(2, 1000, 500, True, p2_data, p2_sheet, p2_steps, p2_fx,control_mode=control_modes["J2"], joystick_id=1)
+    nb_manettes = pygame.joystick.get_count()
+    joystick_id_1 = None
+    joystick_id_2 = None
 
-    countdown_started = False
-    count_start_time = 0
+    # Attribution intelligente des manettes (comme dans select_character)
+    if control_modes["J1"] == "manette":
+        if nb_manettes >= 1:
+            joystick_id_1 = 0
+        else:
+            print("⚠️ Aucune manette disponible pour Joueur 1")
+
+    if control_modes["J2"] == "manette":
+        if control_modes["J1"] == "manette":
+            if nb_manettes >= 2:
+                joystick_id_2 = 1
+            else:
+                print("⚠️ Une seule manette disponible, déjà utilisée par Joueur 1")
+        else:
+            if nb_manettes >= 1:
+                joystick_id_2 = 0
+            else:
+                print("⚠️ Aucune manette disponible pour Joueur 2")
+
+    # Création des joueurs avec joystick dynamiques
+    fighter_1 = Player(
+        1, 200, 480, False,
+        p1_data, p1_sheet, p1_steps, p1_fx,
+        control_mode=control_modes["J1"],
+        joystick_id=joystick_id_1
+    )
+
+    fighter_2 = Player(
+        2, 1000, 500, True,
+        p2_data, p2_sheet, p2_steps, p2_fx,
+        control_mode=control_modes["J2"],
+        joystick_id=joystick_id_2
+    )
 
 
 # Jauge d'énergie segmentée (couleur or)

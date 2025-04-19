@@ -36,8 +36,9 @@ class Player:
             if pygame.joystick.get_count() > joystick_id:
                 self.joystick = pygame.joystick.Joystick(joystick_id)
                 self.joystick.init()
-                print(f"🕹️ Joueur {player} → Manette {joystick_id} activée")
-
+                print(f"🕹️ Manette {joystick_id} assignée au joueur {self.player}")
+            else:
+                print(f"⚠️ Manette {joystick_id} non détectée pour joueur {self.player}")
     def load_images(self, sprite_sheet, animation_steps):
         animation_list = []
         for y, animation in enumerate(animation_steps):
