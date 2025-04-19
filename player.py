@@ -39,6 +39,9 @@ class Player:
                 print(f"🕹️ Manette {joystick_id} assignée au joueur {self.player}")
             else:
                 print(f"⚠️ Manette {joystick_id} non détectée pour joueur {self.player}")
+        else:
+            print(f"⌨️ Joueur {self.player} utilise le clavier")
+
     def load_images(self, sprite_sheet, animation_steps):
         animation_list = []
         for y, animation in enumerate(animation_steps):

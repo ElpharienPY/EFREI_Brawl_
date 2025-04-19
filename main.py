@@ -411,7 +411,11 @@ def select_character(player_key):
     if chosen_character in character_videos:
         play_video(character_videos[chosen_character])
 
-    print(f"{player_key} a choisi : {chosen_character} avec {control_modes[player_key]} (Joystick {joystick_id})")
+    if player_key == "J1":
+        print(f"🧑‍🎮 Joueur 1 a choisi : {chosen_character} avec {control_modes['J1']} (Joystick {joystick_id})")
+    else:
+        print(f"🧑‍🎮 Joueur 2 a choisi : {chosen_character} avec {control_modes['J2']} (Joystick {joystick_id})")
+
 
 # Fonctions
 def draw_text(text, font, text_col, x, y):
@@ -584,10 +588,13 @@ def pause_menu(background_snapshot):
                     selected = (selected - 1) % len(menu_options)
                 elif event.key == pygame.K_RETURN:
                     if selected == 0:
+                        print("↩️ On continue")
                         return "resume"
                     elif selected == 1:
+                        print("↩️ Retour au menu principal")
                         return "menu"
                     elif selected == 2:
+                        print("↩️ Fin du jeu")
                         pygame.quit()
                         exit()
 
@@ -665,6 +672,7 @@ def main_gameplay():
                 ultimate_sounds[name]["cast"].play()
                 projectiles.append(Projectile(proj_x, proj_y, direction, ult["frames"], ult["speed"], ult["damage"], fighter_1, name, hit_sound=ultimate_sounds[name]["hit"],trigger_shake=trigger_shake))
                 fighter_1.energy = 0
+                print(f"💥 {selected_players['J1']} a lancé son attaque ultime !")
 
             if fighter_1.control_mode == "manette" and fighter_1.joystick:
                 if fighter_1.joystick.get_button(3) and fighter_1.energy == 100:
@@ -677,6 +685,7 @@ def main_gameplay():
                                    ult["damage"], fighter_1, name, hit_sound, trigger_shake))
                     ultimate_sounds[name]["cast"].play()
                     fighter_1.energy = 0
+                    print(f"💥 {selected_players['J1']} a lancé son attaque ultime !")
 
             if keys[pygame.K_KP3] and fighter_2.energy == 100:
                 direction = 1 if not fighter_2.flip else -1
@@ -687,6 +696,7 @@ def main_gameplay():
                 ultimate_sounds[name]["cast"].play()
                 projectiles.append(Projectile(proj_x, proj_y, direction, ult["frames"], ult["speed"], ult["damage"], fighter_2, name, hit_sound=ultimate_sounds[name]["hit"],trigger_shake=trigger_shake))
                 fighter_2.energy = 0
+                print(f"💥 {selected_players['J2']} a lancé son attaque ultime !")
 
             # J2 attaque ultime via manette
             if fighter_2.control_mode == "manette" and fighter_2.joystick:
@@ -700,6 +710,7 @@ def main_gameplay():
                                    ult["damage"], fighter_2, name, hit_sound, trigger_shake))
                     ultimate_sounds[name]["cast"].play()
                     fighter_2.energy = 0
+                    print(f"💥 {selected_players['J2']} a lancé son attaque ultime !")
 
             # Projectiles
             for projectile in projectiles:
@@ -724,11 +735,14 @@ def main_gameplay():
                     round_over = True
                     round_over_time = pygame.time.get_ticks()
                     shake = 50
+                    print(f"🏁 Round gagné par Joueur 2 ({selected_players['J2']})")
                 elif not fighter_2.alive:
                     score[0] += 1
                     round_over = True
                     round_over_time = pygame.time.get_ticks()
                     shake = 50
+                    print(f"🏁 Round gagné par Joueur 1 ({selected_players['J1']})")
+
             else:
                 # Fin de partie, au meilleur des 3 manches
                 if score[0] == 3 or score[1] == 3:
