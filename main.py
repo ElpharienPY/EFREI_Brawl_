@@ -102,6 +102,8 @@ background_menu = pygame.image.load("assets/images/menu_background.png")
 background_menu = pygame.transform.scale(background_menu, (WIDTH, HEIGHT))
 button_image = pygame.image.load("assets/images/button_1v1.png")
 button_rect = button_image.get_rect(center=(WIDTH // 2, HEIGHT // 2))
+control_select_background = pygame.image.load("assets/images/control_select_background.png").convert()
+control_select_background = pygame.transform.scale(control_select_background, (WIDTH, HEIGHT))
 
 background_select = pygame.image.load("assets/images/characters_select.png")
 background_select = pygame.transform.scale(background_select, (WIDTH, HEIGHT))
@@ -263,18 +265,18 @@ control_modes = {"J1": "clavier", "J2": "clavier"}
 def choose_controls():
     global control_modes
 
-    font = pygame.font.SysFont("arial", 40)
+    font = pygame.font.Font("assets/fonts/super_smash_4_1_by_pokemon_diamond-d7zxu6d.ttf", 55)
 
     for player in ["J1", "J2"]:
         choosing = True
         mode = "clavier"
 
         while choosing:
-            screen.fill((0, 0, 0))
-            draw_text(f"{player} : Choisir le mode de contrôle", font, WHITE, 250, 150)
+            screen.blit(control_select_background, (0, 0))
+            draw_text(f"{player} : Choisis", font, WHITE, 430, 180)
 
-            draw_text("← Clavier", font, WHITE if mode == "clavier" else (100, 100, 100), 300, 250)
-            draw_text("→ Manette", font, WHITE if mode == "manette" else (100, 100, 100), 600, 250)
+            draw_text("Clavier", font, WHITE if mode == "clavier" else (13, 235, 254), 155, 360)
+            draw_text("Manette", font, WHITE if mode == "manette" else (13, 235, 254), 855, 360)
 
             pygame.display.flip()
 
