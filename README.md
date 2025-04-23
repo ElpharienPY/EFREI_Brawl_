@@ -34,8 +34,8 @@ pip install pygame opencv-python
 Le projet est organisé de la manière suivante :
 ```bash
 .
-├── assets/                # Contient les images, sons et vidéos 🎨🎶
-│   ├── images/            # Les images de personnages, arène, interface, etc.
+├──   assets/                # Contient les images, sons et vidéos 🎨🎶
+│   ├── images/          # Les images de personnages, arène, interface, etc.
 │   ├── sounds/            # Musiques et effets sonores 🔊
 │   └── vidéos/            # Vidéos d'introduction des personnages 🎥
 ├── player.py              # Gère le comportement des personnages 👾

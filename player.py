@@ -307,14 +307,14 @@ class Player:
             if attacking_rect.colliderect(target.rect):
                 target.health -= 5
                 target.hit = True
-                target.energy = min(target.energy + 10, 100)
+                target.energy = min(target.energy + 5, 100)
                 target.hit_counter += 1
                 if target.hit_counter >= 3:
                     target.energy = min(target.energy + 20, 100)
                     target.hit_counter = 0
 
                 self.energy = min(self.energy + 20, 100)
-            pygame.draw.rect(surface, (0, 255, 0), attacking_rect) #Fait apparaitre la hitbox
+            #pygame.draw.rect(surface, (0, 255, 0), attacking_rect) #Fait apparaitre la hitbox
 
     def update_action(self, new_action):
         if new_action != self.action:
