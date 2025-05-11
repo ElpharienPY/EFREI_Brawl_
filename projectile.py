@@ -2,15 +2,15 @@ import pygame
 
 class Projectile:
     def __init__(self, x, y, direction, frames, speed, damage, owner, player_name, hit_sound, trigger_shake):
-        self.frames = frames  # Liste de frames Pygame
+        self.frames = frames  # List of Pygame frames
         self.frame_index = 0
         self.frame_timer = 0
-        self.frame_rate = 4  # nombre de ticks par frame
+        self.frame_rate = 4  # Number of ticks per frame
 
         self.image = self.frames[self.frame_index]
-        # Créer une hitbox plus petite que le sprite visible
+        # Create a hitbox smaller than the visible sprite
         full_rect = self.frames[0].get_rect()
-        hitbox_scale = 0.4  # Réduire la taille de la hitbox à 60% de l'image
+        hitbox_scale = 0.4  # Reduce the hitbox size to 40% of the image
 
         reduced_width = int(full_rect.width * hitbox_scale)
         reduced_height = int(full_rect.height * hitbox_scale)
@@ -18,10 +18,10 @@ class Projectile:
         self.rect = pygame.Rect(0, 0, reduced_width, reduced_height)
         self.rect.center = (x, y)
 
-        self.direction = direction  # -1 = gauche, 1 = droite
+        self.direction = direction  # -1 = left, 1 = right
         self.speed = speed
         self.damage = damage
-        self.owner = owner  # Référence au joueur qui a lancé le projectile
+        self.owner = owner  # Reference to the player who launched the projectile
         self.player_name = player_name
         self.hit_sound = hit_sound
         self.active = True
@@ -30,7 +30,7 @@ class Projectile:
     def move(self):
         self.rect.x += self.speed * self.direction
 
-        # Désactive le projectile s'il sort de l'écran
+        # Deactivate the projectile if it goes off-screen
         if self.rect.right < 0 or self.rect.left >= 1280:
             self.active = False
 

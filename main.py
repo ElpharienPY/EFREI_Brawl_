@@ -10,22 +10,22 @@ from projectile import Projectile
 mixer.init()
 pygame.init()
 
-# Config fenêtre
+# Window config
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Arène")
 
-# Couleurs
+# Colors
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
 WHITE = (255, 255, 255)
 
-# FPS CONTRÔLE
+# FPS CONTROL
 clock = pygame.time.Clock()
 FPS = 60
 
-# Musique et effets sonores
+# Musics and sound fx
 music_folder = "assets/sounds/music_folder"
 music_files = [f for f in os.listdir(music_folder) if f.endswith('.mp3')]
 if music_files:
@@ -76,28 +76,28 @@ FIGHT_SCALE = 5
 FIGHT_OFFSET = [95,88]
 FIGHTER_DATA = [FIGHTER_SIZE,FIGHT_SCALE,FIGHT_OFFSET]
 
-#definir animation
+#define animation
 WARRIOR_ANIMATION_STEPS= [10,8,1,7,7,3,7]
 WIZARD_ANIMATION_STEPS= [8,8,2,8,8,3,7]
 KING_ANIMATION_STEPS= [6,8,2,6,6,4,11]
 FIGHTER_ANIMATION_STEPS= [8,8,2,6,6,4,6]
 
-# Compteur
+# Count
 count_font = pygame.font.Font("assets/fonts/super_smash_4_1_by_pokemon_diamond-d7zxu6d.ttf", 400)
 score_font = pygame.font.Font("assets/fonts/super_smash_4_1_by_pokemon_diamond-d7zxu6d.ttf", 50)
 round_over = False
 
-# Musique Lobby
+# Lobby music
 pygame.mixer.init()
 pygame.mixer.music.load("assets/sounds/lobby_sound.wav")
 pygame.mixer.music.set_volume(0.5)
 pygame.mixer.music.play(-1)
 
-# Configuration de la fenêtre
+# Window configuration
 WIDTH, HEIGHT = 1280, 720
 pygame.display.set_caption("Menu du Jeu")
 
-# Chargement des images de l'interface
+# Loading interface images
 background_menu = pygame.image.load("assets/images/menu_background.png")
 background_menu = pygame.transform.scale(background_menu, (WIDTH, HEIGHT))
 button_image = pygame.image.load("assets/images/button_1v1.png")
@@ -108,14 +108,14 @@ control_select_background = pygame.transform.scale(control_select_background, (W
 background_select = pygame.image.load("assets/images/characters_select.png")
 background_select = pygame.transform.scale(background_select, (WIDTH, HEIGHT))
 
-# Ajout des fonds dédiés pour la sélection des joueurs
+# Addition of dedicated funds for player selection
 player1_screen = pygame.image.load("assets/images/player1_select.png")
 player1_screen = pygame.transform.scale(player1_screen, (WIDTH, HEIGHT))
 
 player2_screen = pygame.image.load("assets/images/player2_select.png")
 player2_screen = pygame.transform.scale(player2_screen, (WIDTH, HEIGHT))
 
-# Liste des personnages et images
+# Liste of characters and images
 character_names = ["M.Rado", "M.Chahine", "Gabi", "M.Kais"]
 character_images = [
     pygame.image.load("assets/images/assets_1_(Rado).png"),
@@ -124,11 +124,11 @@ character_images = [
     pygame.image.load("assets/images/test_joueur4.png"),
 ]
 
-# Redimensionnement des images des personnages
+# Scale characters images
 character_width, character_height = 150, 250
 character_images = [pygame.transform.scale(img, (character_width, character_height)) for img in character_images]
 
-# Coordonnées des personnages
+# Coordinates of characters
 character_positions = [
     (WIDTH // 2 - 378, HEIGHT // 2 - 265),
     (WIDTH // 2 - 172, HEIGHT // 2 - 265),
@@ -136,10 +136,10 @@ character_positions = [
     (WIDTH // 2 + 228, HEIGHT // 2 - 265)
 ]
 
-# Stockage des choix des joueurs sous forme d'index
+# Storage of player choices in index form
 selected_players = {"J1": None, "J2": None}
 
-# Dictionnaire des vidéos d'introduction des personnages
+# Dictionary of character introduction videos
 character_videos = {
     "M.Rado": "assets/vidéos/Rado_intro.mp4",
     "M.Chahine": "assets/vidéos/Chahine_intro.mp4",
@@ -147,7 +147,7 @@ character_videos = {
     "M.Kais": "assets/vidéos/Kais_intro.mp4"
 }
 
-# Dictionnaire des personnages et leurs données associées
+# Dictionary of characters and associated data
 character_data = {
     "M.Rado": {"data": FIGHTER_DATA, "sheet": fighter_sheet, "animation_steps": FIGHTER_ANIMATION_STEPS, "effect": punch_fx},
     "M.Chahine": {"data": KING_DATA, "sheet": king_sheet, "animation_steps": KING_ANIMATION_STEPS, "effect": sword_fx},
@@ -155,7 +155,7 @@ character_data = {
     "M.Kais": {"data": WIZARD_DATA, "sheet": wizard_sheet, "animation_steps": WIZARD_ANIMATION_STEPS, "effect": magic_fx},
 }
 
-# Chargement des spritesheets de projectiles
+# Loading spritesheets bullet
 def load_frames_from_sheet(sheet, frame_width, frame_height, count, scale=1):
     frames = []
     for i in range(count):
@@ -165,7 +165,7 @@ def load_frames_from_sheet(sheet, frame_width, frame_height, count, scale=1):
         frames.append(frame)
     return frames
 
-# Données attaques ultimes
+# Ultimate attack data
 fireball_sheet = pygame.image.load("assets/images/blue_fireball/blue_fireball.png").convert_alpha()
 fireball_frames = load_frames_from_sheet(fireball_sheet, 52, 52, 6, scale=9)
 
@@ -175,7 +175,7 @@ lightning_frames = load_frames_from_sheet(lightning_sheet, 42, 42, 6, scale=9)
 magic_sheet = pygame.image.load("assets/images/magic_spe/magic_spe.png").convert_alpha()
 magic_frames = load_frames_from_sheet(magic_sheet, 50, 50, 6, scale=8)
 
-# Association des attaques ultimes/personnages
+# Ultimate attack/character association
 ultimate_projectiles = {
     "M.Rado": {
         "frames": fireball_frames,
@@ -222,7 +222,7 @@ for sounds in ultimate_sounds.values():
     sounds["hit"].set_volume(0.9)
 
 def play_video(video_path):
-    """Jouer une vidéo directement dans la fenêtre Pygame."""
+    """Play a video directly in the Pygame window."""
     if not os.path.exists(video_path):
         print(f"⚠️ Erreur : Le fichier vidéo {video_path} est introuvable.") #Vérification présence de la vidéo
         return
@@ -263,6 +263,7 @@ def play_video(video_path):
 control_modes = {"J1": "clavier", "J2": "clavier"}
 
 def choose_controls():
+    """Choose between joystick and keyboard"""
     global control_modes
 
     font = pygame.font.Font("assets/fonts/super_smash_4_1_by_pokemon_diamond-d7zxu6d.ttf", 55)
@@ -296,7 +297,7 @@ def choose_controls():
 
 
 def select_player():
-    """Écran pour choisir les joueurs."""
+    """Screen to choose players."""
     global selected_players
 
     # Attente pour J1
@@ -310,9 +311,9 @@ def select_player():
                 pygame.quit()
                 exit()
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_1:
-                waiting = False  # J1 a appuyé sur "1"
+                waiting = False  # J1 press "1"
 
-    select_character("J1")  # Sélection du personnage du Joueur 1
+    select_character("J1")  # Selection of characters for player 1
 
     # Attente pour J2
     screen.blit(player2_screen, (0, 0))
@@ -325,14 +326,14 @@ def select_player():
                 pygame.quit()
                 exit()
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_2:
-                waiting = False  # J2 a appuyé sur "2"
+                waiting = False  # J2 press "2"
 
-    select_character("J2")  # Sélection du personnage du Joueur 2
+    select_character("J2")  # Selection of characters for player 2
 
     pygame.mixer.music.stop()
 
 def select_character(player_key):
-    """Écran pour choisir un personnage avec stockage dans le dictionnaire."""
+    """Character selection screen with dictionary storage."""
     global selected_players, fighter_1, fighter_2
     selected_index = 0
     running = True
@@ -361,11 +362,11 @@ def select_character(player_key):
 
         pygame.display.flip()
 
-    # Récupérer les données du personnage choisi
+    # Retrieve data for the selected character
     chosen_character = selected_players[player_key]
     character_info = character_data[chosen_character]
 
-    # Attribution intelligente du joystick_id
+    # Intelligent joystick_id assignment
     joystick_id = None
     nb_manettes = pygame.joystick.get_count()
 
@@ -374,20 +375,20 @@ def select_character(player_key):
             if nb_manettes >= 1:
                 joystick_id = 0
             else:
-                print("⚠️ Aucune manette détectée pour Joueur 1")
+                print("⚠️ No controller detected for Player 1")
         elif player_key == "J2":
             if control_modes["J1"] == "manette":
                 if nb_manettes >= 2:
                     joystick_id = 1
                 else:
-                    print("⚠️ Une seule manette détectée, déjà utilisée par Joueur 1")
+                    print("⚠️ Only one controller detected, already in use by Player 1")
             else:
                 if nb_manettes >= 1:
                     joystick_id = 0
                 else:
-                    print("⚠️ Aucune manette détectée pour Joueur 2")
+                    print("⚠️ No controller detected for Player 2")
 
-    # Initialisation du joueur
+    # Initialisation of the player
     if player_key == "J1":
         fighter_1 = Player(
             1, 200, 480, False,
@@ -409,25 +410,28 @@ def select_character(player_key):
             joystick_id=joystick_id
         )
 
-    # Vidéo d’intro
+    # Intro video
     if chosen_character in character_videos:
         play_video(character_videos[chosen_character])
 
     if player_key == "J1":
-        print(f"🧑‍🎮 Joueur 1 a choisi : {chosen_character} avec {control_modes['J1']} (Joystick {joystick_id})")
+        print(f"🧑‍🎮 Player 1 choose : {chosen_character} with {control_modes['J1']} (Joystick {joystick_id})")
     else:
-        print(f"🧑‍🎮 Joueur 2 a choisi : {chosen_character} avec {control_modes['J2']} (Joystick {joystick_id})")
+        print(f"🧑‍🎮 Player 2 choose : {chosen_character} with {control_modes['J2']} (Joystick {joystick_id})")
 
 
-# Fonctions
+# Functions
 def draw_text(text, font, text_col, x, y):
+    """Display text on whatever is necessary."""
     img = font.render(text, True, text_col)
     screen.blit(img, (x, y))
 
 def draw_background():
+    """Display background."""
     screen.blit(background, (0, 0))
 
 def draw_health_bar(health, x, y):
+    """Display health bar."""
     ratio = health / 100
     screen.blit(versus, (0, 0))
     pygame.draw.rect(screen, RED, (x - 5, y - 5, 410, 40))
@@ -435,13 +439,14 @@ def draw_health_bar(health, x, y):
     pygame.draw.rect(screen, BLUE, pygame.Rect(x, y, 400 * ratio, 30))
 
 def check_game_over():
+    """Best-of-5-rounds (BO5) combat system"""
     if score[0] == 3:
         return "Joueur 1 Gagne !"
     elif score[1] == 3:
         return "Joueur 2 Gagne !"
     return None
 
-# Dictionnaire d'association entre les personnages et leurs données
+# Dictionary of associations between characters and their data
 character_mapping = {
     "M.Rado": (FIGHTER_DATA, fighter_sheet, FIGHTER_ANIMATION_STEPS, punch_fx),
     "M.Chahine": (KING_DATA, king_sheet, KING_ANIMATION_STEPS, sword_fx),
@@ -450,14 +455,14 @@ character_mapping = {
 }
 
 def reset_round():
-    """Réinitialise le round en prenant en compte les personnages sélectionnés."""
+    """Resets the round taking into account the selected characters."""
     global fighter_1, fighter_2, intro_count, round_over, rounds_joues
 
     rounds_joues += 1
     intro_count = 3
     round_over = False
 
-    # Récupérer les choix des joueurs
+    # Retrieving players' choices
     player1_choice = selected_players["J1"]
     player2_choice = selected_players["J2"]
 
@@ -468,26 +473,26 @@ def reset_round():
     joystick_id_1 = None
     joystick_id_2 = None
 
-    # Attribution intelligente des manettes (comme dans select_character)
+    # Intelligent joystick assignment (as in select_character)
     if control_modes["J1"] == "manette":
         if nb_manettes >= 1:
             joystick_id_1 = 0
         else:
-            print("⚠️ Aucune manette disponible pour Joueur 1")
+            print("⚠️ No controller available for Player 1")
 
     if control_modes["J2"] == "manette":
         if control_modes["J1"] == "manette":
             if nb_manettes >= 2:
                 joystick_id_2 = 1
             else:
-                print("⚠️ Une seule manette disponible, déjà utilisée par Joueur 1")
+                print("⚠️ Only one controller available, already used by Player 1")
         else:
             if nb_manettes >= 1:
                 joystick_id_2 = 0
             else:
-                print("⚠️ Aucune manette disponible pour Joueur 2")
+                print("⚠️ No controller available for Player 2")
 
-    # Création des joueurs avec joystick dynamiques
+    # Player creation with dynamic joysticks
     fighter_1 = Player(
         1, 200, 480, False,
         p1_data, p1_sheet, p1_steps, p1_fx,
@@ -503,8 +508,9 @@ def reset_round():
     )
 
 
-# Jauge d'énergie segmentée (couleur or)
+# Segmented energy gauge gold color
 def draw_energy_bar_segments(energy, x, y):
+    """Generates dynamic attack bars"""
     segment_count = 5
     segment_width = 35
     segment_height = 15
@@ -522,7 +528,7 @@ def draw_energy_bar_segments(energy, x, y):
         pygame.draw.rect(screen, color, (seg_x, y, segment_width, segment_height), border_radius=4)
         pygame.draw.rect(screen, WHITE, (seg_x, y, segment_width, segment_height), 2, border_radius=4)
 
-# Variables globales
+# Global variables
 fighter_1 = None
 fighter_2 = None
 projectiles = []
@@ -538,31 +544,33 @@ ROUND_OVER_COOLDOWN = 2000
 emoji_font=pygame.font.SysFont("segoeuiemoji", 40)
 
 def trigger_shake(intensity):
+    """Screen hake"""
     global shake
     shake = intensity
 
 def pause_menu(background_snapshot):
+    """In-game interactive pause menu"""
     pause_font = pygame.font.Font("assets/fonts/neo-latina-demo-FFP.ttf", 55)
     menu_options = ["Reprendre", "Menu", "Quitter"]
     selected = 0
     running = True
 
-    # Création des rectangles de bouton
+    # Creating button rectangles
     button_rects = []
     for i in range(len(menu_options)):
         rect = pygame.Rect(SCREEN_WIDTH//2 - 150, 250 + i * 100, 300, 70)
         button_rects.append(rect)
 
     while running:
-        # Afficher le fond figé du jeu
+        # Display the frozen background of the game
         screen.blit(background_snapshot, (0, 0))
 
-        # Superposition grise semi-transparente
+        # Semi-transparent gray overlay
         gray_overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
-        gray_overlay.fill((50, 50, 50, 180))  # gris foncé semi-transparent
+        gray_overlay.fill((50, 50, 50, 180))  # dark grey semi-transparent
         screen.blit(gray_overlay, (0, 0))
 
-        # Dessin des boutons
+        # Button design
         for i, rect in enumerate(button_rects):
             if rect.collidepoint(pygame.mouse.get_pos()):
                 selected = i
@@ -570,14 +578,14 @@ def pause_menu(background_snapshot):
             color = (200, 200, 200) if i == selected else (100, 100, 100)
             pygame.draw.rect(screen, color, rect, border_radius=8)
 
-            # Texte centré dans le bouton
+            # Text centered in button
             text_surf = pause_font.render(menu_options[i], True, BLUE)
             text_rect = text_surf.get_rect(center=rect.center)
             screen.blit(text_surf, text_rect)
 
         pygame.display.flip()
 
-        # Gestion des événements
+        # Event management
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -590,18 +598,18 @@ def pause_menu(background_snapshot):
                     selected = (selected - 1) % len(menu_options)
                 elif event.key == pygame.K_RETURN:
                     if selected == 0:
-                        print("↩️ On continue")
+                        print("↩️ continue")
                         return "resume"
                     elif selected == 1:
-                        print("↩️ Retour au menu principal")
+                        print("↩️ Back to main menu")
                         return "menu"
                     elif selected == 2:
-                        print("↩️ Fin du jeu")
+                        print("↩️ End of game")
                         pygame.quit()
                         exit()
 
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1:  # clic gauche
+                if event.button == 1:  # left clic
                     for i, rect in enumerate(button_rects):
                         if rect.collidepoint(event.pos):
                             if i == 0:
@@ -613,6 +621,7 @@ def pause_menu(background_snapshot):
                                 exit()
 
 def main_gameplay():
+    """Main function of the game"""
     global round_over, score, intro_count, last_count_update, rounds_joues, countdown_started, count_start_time, count_complete, shake, fighter_1, fighter_2
 
     run = True
@@ -620,9 +629,6 @@ def main_gameplay():
     count_complete = False
 
     reset_round()
-    """draw_background()
-    pygame.display.flip()
-    pygame.time.delay(500)  # court délai pour forcer le redraw"""
 
     check_music = [f for f in os.listdir(music_folder) if f.endswith('.mp3')]
     if check_music:
@@ -644,7 +650,7 @@ def main_gameplay():
         else:
             draw_background()
 
-        # Affichage barres et noms
+        # Display bars and names
         draw_health_bar(fighter_1.health, 20, 70)
         draw_health_bar(fighter_2.health, 850, 70)
         draw_energy_bar_segments(fighter_1.energy, 20, 110)
@@ -653,28 +659,28 @@ def main_gameplay():
         stars_p1 = "💥" * score[0]
         stars_p2 = "💥" * score[1]
 
-        # Afficher noms + étoiles
+        # Display names + stars
         draw_text(f"{selected_players['J1']}  {stars_p1}", emoji_font, WHITE, 20, 20)
         draw_text(f"{stars_p2}  {selected_players['J2']}", emoji_font, WHITE, 850, 20)
 
         if intro_count <= 0:
-            # Mouvements et update
+            # Movements and updates
             fighter_1.move(SCREEN_WIDTH, SCREEN_HEIGHT, screen, fighter_2, round_over)
             fighter_2.move(SCREEN_WIDTH, SCREEN_HEIGHT, screen, fighter_1, round_over)
 
-            # Attaques ultimes
+            # Ultimate attacks
             keys = pygame.key.get_pressed()
             if keys[pygame.K_a] and fighter_1.energy == 100:
                 direction = 1 if not fighter_1.flip else -1
                 name = selected_players["J1"]
                 ult = ultimate_projectiles[name]
 
-                # Point de départ ajusté vers le haut du corps
-                proj_x, proj_y = fighter_1.get_projectile_origin()  # Même principe
+                # Starting point adjusted towards the top of the body
+                proj_x, proj_y = fighter_1.get_projectile_origin()  # Same principle
                 ultimate_sounds[name]["cast"].play()
                 projectiles.append(Projectile(proj_x, proj_y, direction, ult["frames"], ult["speed"], ult["damage"], fighter_1, name, hit_sound=ultimate_sounds[name]["hit"],trigger_shake=trigger_shake))
                 fighter_1.energy = 0
-                print(f"💥 {selected_players['J1']} a lancé son attaque ultime !")
+                print(f"💥 {selected_players['J1']} has launched its ultimate attack !")
 
             if fighter_1.control_mode == "manette" and fighter_1.joystick:
                 if fighter_1.joystick.get_button(3) and fighter_1.energy == 100:
@@ -687,20 +693,20 @@ def main_gameplay():
                                    ult["damage"], fighter_1, name, hit_sound, trigger_shake))
                     ultimate_sounds[name]["cast"].play()
                     fighter_1.energy = 0
-                    print(f"💥 {selected_players['J1']} a lancé son attaque ultime !")
+                    print(f"💥 {selected_players['J1']} has launched its ultimate attack !")
 
             if keys[pygame.K_KP3] and fighter_2.energy == 100:
                 direction = 1 if not fighter_2.flip else -1
                 name = selected_players["J2"]
                 ult = ultimate_projectiles[name]
 
-                proj_x, proj_y = fighter_2.get_projectile_origin() # Même principe
+                proj_x, proj_y = fighter_2.get_projectile_origin() # Same principle
                 ultimate_sounds[name]["cast"].play()
                 projectiles.append(Projectile(proj_x, proj_y, direction, ult["frames"], ult["speed"], ult["damage"], fighter_2, name, hit_sound=ultimate_sounds[name]["hit"],trigger_shake=trigger_shake))
                 fighter_2.energy = 0
-                print(f"💥 {selected_players['J2']} a lancé son attaque ultime !")
+                print(f"💥 {selected_players['J2']} has launched its ultimate attack !")
 
-            # J2 attaque ultime via manette
+            # J2 ultimate attack via joystick
             if fighter_2.control_mode == "manette" and fighter_2.joystick:
                 if fighter_2.joystick.get_button(3) and fighter_2.energy == 100:
                     name = selected_players["J2"]
@@ -712,9 +718,9 @@ def main_gameplay():
                                    ult["damage"], fighter_2, name, hit_sound, trigger_shake))
                     ultimate_sounds[name]["cast"].play()
                     fighter_2.energy = 0
-                    print(f"💥 {selected_players['J2']} a lancé son attaque ultime !")
+                    print(f"💥 {selected_players['J2']} has launched its ultimate attack !")
 
-            # Projectiles
+            # Bullet
             for projectile in projectiles:
                 projectile.update()
                 projectile.draw(screen)
@@ -730,7 +736,7 @@ def main_gameplay():
             fighter_1.draw(screen)
             fighter_2.draw(screen)
 
-            # Round terminé ?
+            # Round finish ?
             if not round_over:
                 if not fighter_1.alive:
                     score[1] += 1
@@ -746,7 +752,7 @@ def main_gameplay():
                     print(f"🏁 Round gagné par Joueur 1 ({selected_players['J1']})")
 
             else:
-                # Fin de partie, au meilleur des 3 manches
+                # End of game, best of 3 rounds
                 if score[0] == 3 or score[1] == 3:
                     screen.blit(victory, (0, 0))
                     pygame.display.flip()
@@ -755,7 +761,7 @@ def main_gameplay():
                 elif pygame.time.get_ticks() - round_over_time > ROUND_OVER_COOLDOWN:
                     reset_round()
         else:
-            # Affichage du compte à rebours
+            # Countdown display
             count_sound="assets/sounds/count_sound0.mp3"
             count_fx = pygame.mixer.Sound(count_sound)
             if not countdown_started:
@@ -778,7 +784,7 @@ def main_gameplay():
                 draw_text("GO!", count_font, BLUE, 340, 200)
                 draw_text("GO!", count_font, WHITE, 335, 195)
             else:
-                intro_count = 0  # Fin du compte à rebours
+                intro_count = 0  # End of countdown
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -789,9 +795,9 @@ def main_gameplay():
                     paused_screen = screen.copy()
                     action = pause_menu(paused_screen)
                     if action == "menu":
-                        pygame.mixer.music.stop()  # 🔇 Stop combat music
+                        pygame.mixer.music.stop()  # Stop combat music
                         pygame.mixer.music.load("assets/sounds/lobby_sound.wav")
-                        pygame.mixer.music.fadeout(1000)  # 🔇 Fondu sur 1 seconde
+                        pygame.mixer.music.fadeout(1000)  # Fondu sur 1 seconde
                         pygame.time.delay(1000)  # Attend que le fondu se termine
 
                         pygame.mixer.music.load("assets/sounds/lobby_sound.wav")
@@ -805,12 +811,11 @@ def main_gameplay():
                         main_gameplay()
                         return
                     elif action == "resume":
-                        continue  # Reprendre le jeu
-
+                        continue  # Resume play
         pygame.display.flip()
 
 def main_menu():
-    """Menu principal du jeu avec bouton interactif."""
+    """Main game menu with interactive button."""
     running = True
     while running:
         screen.blit(background_menu, (0, 0))
@@ -828,5 +833,6 @@ def main_menu():
         pygame.display.flip()
     pygame.quit()
 
-# Lancer le menu principal
-main_menu()
+# Launch main
+if __name__ == "__main__":
+    main_menu()

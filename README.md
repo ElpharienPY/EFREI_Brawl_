@@ -1,122 +1,119 @@
 # **💥 EFREI BRAWL 💥**
 
-## **Présentation du projet**
-Ce projet est un jeu de combat 2D développé avec **Pygame**. 🎮 Deux joueurs s'affrontent dans une arène avec des personnages ayant des attaques et des mouvements spécifiques. Chaque joueur choisit un personnage et lutte pour atteindre la victoire en remportant un maximum de rounds. 🏆
+## **Project Overview**
+This project is a 2D fighting game developed with **Pygame**. 🎮 Two players compete in an arena using characters with unique attacks and moves. Each player selects a character and fights to win the most rounds. 🏆
 
-Le jeu dispose de plusieurs personnages avec des animations et des effets sonores. 🔊
+The game includes several characters with animations and sound effects. 🔊
 
-Nos enseignants sont les combattants ! Avec leurs accords, ils font place dans la terrible arène : **L'amphi E003** ⚔️🔥
+Our teachers are the fighters! With their permission, they enter the dreadful arena: **The E003 Lecture Hall** ⚔️🔥
 
-## **Table des matières**
+## **Table of Contents**
 - [📥 Installation](#installation)
-- [🎮 Fonctionnalités](#fonctionnalités)
-- [🎮 Commandes](#commandes)
-- [📸 Quelques images](#screenshots)
-- [👨‍💻 Auteurs](#auteurs)
-- [📜 Licence](#licence)
+- [🎮 Features](#features)
+- [🎮 Controls](#controls)
+- [📸 Screenshots](#screenshots)
+- [👨‍💻 Authors](#authors)
+- [📜 License](#license)
 
 ## **📥 Installation**
-Voici les étapes pour installer et exécuter le jeu sur votre machine :
+Here are the steps to install and run the game on your machine:
 
-### 1. 🚀 Cloner le projet
-Clonez le projet depuis GitHub en utilisant la commande suivante :
+### 1. 🚀 Clone the Project
+Clone the project from GitHub using the following command:
 ```bash
 git clone https://github.com/ElpharienPY/EFREI_Brawl_.git
 ```
 
-### 2. 📦 Installer les dépendances
-Ce jeu utilise Pygame et OpenCV. Pour installer les dépendances nécessaires, exécutez les commandes suivantes :
+### 2. 📦 Install Dependencies
+This game uses Pygame and OpenCV. Install them with:
 ```bash
 pip install pygame opencv-python
 ```
 
-### 3. 📂 Structure du projet
-Le projet est organisé de la manière suivante :
+### 3. 📂 Project Structure
 ```bash
 .
-├──   assets/                # Contient les images, sons et vidéos 🎨🎶
-│   ├── images/          # Les images de personnages, arène, interface, etc.
-│   ├── sounds/            # Musiques et effets sonores 🔊
-│   └── vidéos/            # Vidéos d'introduction des personnages 🎥
-├── player.py              # Gère le comportement des personnages 👾
-├── game.py                # Gestion du gameplay 🎮
-├── menu.py                # Gestion de l'interface du menu principal 🏠
-├── main.py                # Fichier principal pour exécuter le jeu ▶️
-└── README.md              # Ce fichier 📖
+├── assets/                # Contains images, sounds, and videos 🎨🎶
+│   ├── images/            # Character, arena, interface images
+│   ├── sounds/            # Music and sound effects 🔊
+│   └── videos/            # Character intro videos 🎥
+├── player.py              # Handles character behavior 👾
+├── game.py                # Manages gameplay 🎮
+├── menu.py                # Main menu interface 🏠
+├── main.py                # Main file to run the game ▶️
+└── README.md              # This file 📖
 ```
 
-### 4. 🎯 Lancer le jeu
-Une fois les dépendances installées, vous pouvez démarrer le jeu en exécutant le fichier principal :
+### 4. 🎯 Run the Game
+Once installed, you can launch the game by running:
 ```bash
 python main.py
 ```
 
-## **🎮 Fonctionnalités**
-- **🔹 Sélection des personnages** : Les joueurs peuvent choisir parmi une liste de personnages avec des animations spécifiques.
-- **🔹 Modes de jeu** : Le jeu supporte un mode 1v1 avec des rounds et une gestion du score. 🏆
-- **🔹 Animations et effets** : Chaque personnage dispose de son propre jeu d'animations pour les attaques, les sauts et autres actions. Des effets sonores sont également associés. 🎭
-- **🔹 Vidéos d'introduction** : Chaque personnage a une vidéo d'introduction avant le début de la partie. 🎬
-- **🔹 Interface graphique** : Un menu principal pour la sélection des joueurs et des personnages. 🖥️
+## **🎮 Features**
+- **🔹 Character selection**: Players can choose from a list of characters with specific animations.
+- **🔹 Game modes**: 1v1 mode with rounds and score tracking. 🏆
+- **🔹 Animations and effects**: Each character has attack, jump, and action animations with sound effects. 🎭
+- **🔹 Intro videos**: Every character has an intro video before the match. 🎬
+- **🔹 Graphical interface**: A main menu for player and character selection. 🖥️
 
-### 1️⃣ Sélection des Personnages ✨
-Chaque joueur peut choisir parmi les quatre personnages disponibles, chacun ayant ses propres caractéristiques et compétences spéciales. ⚡
-## 🧩 Personnages disponibles
+### 1️⃣ Character Selection ✨
+Each player can choose from four available characters, each with unique attributes and ultimate abilities. ⚡
 
-| Nom        | Type      | Attaque Ultime   |
-|------------|-----------|------------------|
-| M.Rado     | Boxeur    | Explosion de feu |
-| M.Chahine  | Roi       | Rayon royal      |
-| Gabi       | Chevalier | Foudre           |
-| M.Kais     | Sorcier   | Boule de feu     |
+## 🧩 Available Characters
 
+| Name       | Type     | Ultimate Attack     |
+|------------|----------|---------------------|
+| M.Rado     | Boxer    | Fire Explosion      |
+| M.Chahine  | King     | Royal Beam          |
+| Gabi       | Knight   | Thunder             |
+| M.Kais     | Wizard   | Fireball            |
 
 ### 2️⃣ Combat ⚔️🔥
-Le gameplay se déroule dans une arène où les joueurs s'affrontent en utilisant des attaques de mêlée et des compétences spéciales. Des effets sonores et des animations rendent chaque attaque plus immersive. 💥
+The gameplay takes place in an arena where players fight using melee and special attacks. Sound effects and animations make every hit more immersive. 💥
 
-### 3️⃣ Musique et Effets Sonores 🎶
-Des morceaux de musique sont joués en fond sonore pendant le combat, et chaque attaque est accompagnée d'effets sonores pour augmenter l'immersion. 🎧
+### 3️⃣ Music and Sound Effects 🎶
+Music plays during combat and every attack includes sound effects for better immersion. 🎧
 
-## **🎮 Commandes**
-Voici les commandes que vous pouvez utiliser dans le jeu :
+## **🎮 Controls**
 
-- **⏹️ Échap (ESC)** : Ouverture du menu pause
-    ### 🧩 Commandes disponibles
-    
-    | Retour | Menu | Quitter |
-    |--------|------|---------|
-- 
-- **⬅️➡️ Flèche droite / Flèche gauche** : Naviguer dans les options de sélection des personnages.
-- **⏭️ Entrée (Enter)** : Valider le choix du personnage.
-- **1️⃣ / 2️⃣** : Sélectionner les personnages pour les joueurs 1 et 2.
+- **⏹️ Escape (ESC)**: Open pause menu  
+  ### 🧩 Pause Menu Options  
+  | Resume | Menu | Quit |
+  |--------|------|------|
 
-### **👤 Joueur 1**
-- **Z, Q, S, D** : Pour se déplacer 🚶‍♂️
-- **E, R** : Pour attaquer 🥊
-- **'2'** : Double saut
-- **A** : Attaque ultime 
+- **⬅️➡️ Left / Right Arrows**: Navigate character selection
+- **⏭️ Enter**: Confirm character choice
+- **1️⃣ / 2️⃣**: Select characters for players 1 and 2
 
-### **👤 Joueur 2**
-- **⬆️⬇️⬅️➡️** : Pour se déplacer 🚶‍♂️
-- **num1, num2** : Pour attaquer 🥊
-- **'R_SHIFT'** : Double saut
-- **num3** : Attaque ultime 
+### **👤 Player 1**
+- **Z, Q, S, D**: Move 🚶‍♂️  
+- **E, R**: Attack 🥊  
+- **2**: Double jump  
+- **A**: Ultimate attack  
+
+### **👤 Player 2**
+- **Arrow Keys**: Move 🚶‍♂️  
+- **Num1, Num2**: Attack 🥊  
+- **Right Shift**: Double jump  
+- **Num3**: Ultimate attack  
 
 ## **📸 Screenshots**
-Voici quelques captures d'écran du jeu pour vous donner un aperçu de l'interface et du gameplay :
+Here are a few screenshots showing the interface and gameplay:
 
-![🎭 Écran de sélection des personnages](assets/screenshots/selection.png)
-*Écran de sélection des personnages*
+![🎭 Character Selection Screen](assets/screenshots/selection.png)  
+*Character selection screen*
 
-![⚔️ Combat en cours](assets/screenshots/combat.png)
-*Exemple d'un combat en cours*
+![⚔️ In-Game Fight](assets/screenshots/combat.png)  
+*Example of an ongoing fight*
 
-## **👨‍💻 Auteurs**
-- **Raphael Gastaldo** 🏆
-- **Alexandre Johannel** 🎭
-- **Iwan Hosny** 🔥
+## **👨‍💻 Authors**
+- **Raphaël Gastaldo** 🏆  
+- **Alexandre Johannel** 🎭  
+- **Iwan Hosny** 🔥  
 - **Youssef Bramli** 🎮
 
-## **📜 Licence**
-Ce projet est sous la licence MIT. 📄
+## **📜 License**
+This project is licensed under the MIT License. 📄
 
-🔥 Libre à vous d'y jouer ! Amusez-vous bien ! 🎮✨
+🔥 Feel free to play! Have fun! 🎮✨
