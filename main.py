@@ -300,7 +300,7 @@ def select_player():
     """Screen to choose players."""
     global selected_players
 
-    # Attente pour J1
+    # Wait for J1
     screen.blit(player1_screen, (0, 0))
     pygame.display.flip()
 
@@ -315,7 +315,7 @@ def select_player():
 
     select_character("J1")  # Selection of characters for player 1
 
-    # Attente pour J2
+    # Wait for J2
     screen.blit(player2_screen, (0, 0))
     pygame.display.flip()
 
@@ -462,7 +462,7 @@ def reset_round():
     intro_count = 3
     round_over = False
 
-    # Retrieving players' choices
+    # Retrieving players choices
     player1_choice = selected_players["J1"]
     player2_choice = selected_players["J2"]
 
@@ -655,7 +655,7 @@ def main_gameplay():
         draw_health_bar(fighter_2.health, 850, 70)
         draw_energy_bar_segments(fighter_1.energy, 20, 110)
         draw_energy_bar_segments(fighter_2.energy, 850, 110)
-        # Icônes étoiles pour le score
+        # Stars for the score
         stars_p1 = "💥" * score[0]
         stars_p2 = "💥" * score[1]
 
@@ -743,13 +743,13 @@ def main_gameplay():
                     round_over = True
                     round_over_time = pygame.time.get_ticks()
                     shake = 50
-                    print(f"🏁 Round gagné par Joueur 2 ({selected_players['J2']})")
+                    print(f"🏁 Round win by Joueur 2 ({selected_players['J2']})")
                 elif not fighter_2.alive:
                     score[0] += 1
                     round_over = True
                     round_over_time = pygame.time.get_ticks()
                     shake = 50
-                    print(f"🏁 Round gagné par Joueur 1 ({selected_players['J1']})")
+                    print(f"🏁 Round win by Joueur 1 ({selected_players['J1']})")
 
             else:
                 # End of game, best of 3 rounds
