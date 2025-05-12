@@ -121,7 +121,7 @@ character_images = [
     pygame.image.load("assets/images/assets_1_(Rado).png"),
     pygame.image.load("assets/images/assets_2_(Chahine).png"),
     pygame.image.load("assets/images/assets_3_(Morgadp).png"),
-    pygame.image.load("assets/images/test_joueur4.png"),
+    pygame.image.load("assets/images/secret_character.png"),
 ]
 
 # Scale characters images
