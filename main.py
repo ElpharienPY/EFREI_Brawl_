@@ -797,8 +797,8 @@ def main_gameplay():
                     if action == "menu":
                         pygame.mixer.music.stop()  # Stop combat music
                         pygame.mixer.music.load("assets/sounds/lobby_sound.wav")
-                        pygame.mixer.music.fadeout(1000)  # Fondu sur 1 seconde
-                        pygame.time.delay(1000)  # Attend que le fondu se termine
+                        pygame.mixer.music.fadeout(1000)  # Fade to 1 second
+                        pygame.time.delay(1000)  # Wait till the fade is over
 
                         pygame.mixer.music.load("assets/sounds/lobby_sound.wav")
                         pygame.mixer.music.set_volume(0.5)

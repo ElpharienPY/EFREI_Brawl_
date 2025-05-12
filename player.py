@@ -126,7 +126,6 @@ class Player:
                 if self.jump and self.can_double_jump and self.joystick.get_button(11):
                     self.vel_y = -30
                     self.can_double_jump = False
-                    print(f"Double jump for player {self.player} using button 12 (D-pad up)")
 
                 if self.joystick.get_button(1):  # Square
                     self.attack(surface, target, 1)
