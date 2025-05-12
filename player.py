@@ -219,7 +219,7 @@ class Player:
                     target.hit_counter = 0
 
                 self.energy = min(self.energy + 20, 100)
-            #pygame.draw.rect(surface, (0, 255, 0), attacking_rect) #Fait apparaitre la hitbox
+            #pygame.draw.rect(surface, (0, 255, 0), attacking_rect) # Diplay the hitbox
 
     def update_action(self, new_action):
         if new_action != self.action:
