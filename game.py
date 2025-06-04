@@ -142,8 +142,8 @@ while run:
     draw_text("P2: " + str(score[1]), score_font, BLUE, 1145, 90)
 
     if intro_count <= 0:
-        fighter_1.move(SCREEN_WIDTH, SCREEN_HEIGHT)
-        fighter_2.move(SCREEN_WIDTH, SCREEN_HEIGHT)
+        fighter_1.move(SCREEN_WIDTH, SCREEN_HEIGHT, screen, fighter_2, round_over)
+        fighter_2.move(SCREEN_WIDTH, SCREEN_HEIGHT, screen, fighter_1, round_over)
     else:
         draw_text(str(intro_count), count_font, BLUE, 540, 200)
         draw_text(str(intro_count), count_font, WHITE, 535, 195)
